@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { TraceEdge, TraceNode } from "@/lib/data";
-import { Badge, cn, statusTone } from "./ui";
+import { Badge, cn, statusTone } from "@/components/ui";
 
 /* ------------------------------------------------------------------ */
 /* TraceabilityGraph                                                   */
@@ -22,9 +22,9 @@ const kindMeta: Record<TraceNode["kind"], { label: string; glyph: JSX.Element }>
     label: "Instrument",
     glyph: (
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-        <circle cx="7" cy="7" r="4.6" stroke="#285DAD" strokeWidth="1.4" />
-        <circle cx="7" cy="7" r="1.4" fill="#168A91" />
-        <path d="M7 0.5v2.6M7 10.9v2.6M0.5 7h2.6M10.9 7h2.6" stroke="#285DAD" strokeWidth="1.4" strokeLinecap="round" />
+        <circle cx="7" cy="7" r="4.6" stroke="#6366F1" strokeWidth="1.4" />
+        <circle cx="7" cy="7" r="1.4" fill="#2DD4BF" />
+        <path d="M7 0.5v2.6M7 10.9v2.6M0.5 7h2.6M10.9 7h2.6" stroke="#6366F1" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -32,8 +32,8 @@ const kindMeta: Record<TraceNode["kind"], { label: string; glyph: JSX.Element }>
     label: "Calibration record",
     glyph: (
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-        <rect x="2" y="1" width="10" height="12" rx="1" stroke="#285DAD" strokeWidth="1.4" />
-        <path d="M4.2 4.4h5.6M4.2 7h5.6M4.2 9.6h3.4" stroke="#168A91" strokeWidth="1.3" strokeLinecap="round" />
+        <rect x="2" y="1" width="10" height="12" rx="1" stroke="#6366F1" strokeWidth="1.4" />
+        <path d="M4.2 4.4h5.6M4.2 7h5.6M4.2 9.6h3.4" stroke="#2DD4BF" strokeWidth="1.3" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -41,8 +41,8 @@ const kindMeta: Record<TraceNode["kind"], { label: string; glyph: JSX.Element }>
     label: "Reference standard",
     glyph: (
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-        <path d="M3 2.2h8v2.6l-2.6 2.9V12H5.6V7.7L3 4.8V2.2Z" stroke="#285DAD" strokeWidth="1.3" />
-        <circle cx="6.6" cy="9.8" r="1" fill="#168A91" />
+        <path d="M3 2.2h8v2.6l-2.6 2.9V12H5.6V7.7L3 4.8V2.2Z" stroke="#6366F1" strokeWidth="1.3" />
+        <circle cx="6.6" cy="9.8" r="1" fill="#2DD4BF" />
       </svg>
     ),
   },
@@ -50,8 +50,8 @@ const kindMeta: Record<TraceNode["kind"], { label: string; glyph: JSX.Element }>
     label: "Reference laboratory",
     glyph: (
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-        <path d="M2 12.4V4.8L7 1.6l5 3.2v7.6H2Z" stroke="#285DAD" strokeWidth="1.3" />
-        <path d="M5.4 12.4V9h3.2v3.4" stroke="#168A91" strokeWidth="1.2" />
+        <path d="M2 12.4V4.8L7 1.6l5 3.2v7.6H2Z" stroke="#6366F1" strokeWidth="1.3" />
+        <path d="M5.4 12.4V9h3.2v3.4" stroke="#2DD4BF" strokeWidth="1.2" />
       </svg>
     ),
   },
@@ -59,8 +59,8 @@ const kindMeta: Record<TraceNode["kind"], { label: string; glyph: JSX.Element }>
     label: "Issuing laboratory",
     glyph: (
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-        <path d="M2 12.4V4.8L7 1.6l5 3.2v7.6H2Z" stroke="#285DAD" strokeWidth="1.3" />
-        <path d="M5.4 12.4V9h3.2v3.4M8.6 6H5.4" stroke="#168A91" strokeWidth="1.2" />
+        <path d="M2 12.4V4.8L7 1.6l5 3.2v7.6H2Z" stroke="#6366F1" strokeWidth="1.3" />
+        <path d="M5.4 12.4V9h3.2v3.4M8.6 6H5.4" stroke="#2DD4BF" strokeWidth="1.2" />
       </svg>
     ),
   },
@@ -186,3 +186,4 @@ export default function TraceabilityGraph({
     </div>
   );
 }
+

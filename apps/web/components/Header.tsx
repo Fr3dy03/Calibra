@@ -14,7 +14,7 @@ const nav = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-bg/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-bg/70 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Brand />
         <nav aria-label="Main" className="hidden items-center gap-5 xl:flex">

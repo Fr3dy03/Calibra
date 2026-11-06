@@ -14,32 +14,32 @@ const sitemap = [
 
 export default function Footer() {
   return (
-    <footer className="mt-20 bg-[#263643] text-white">
+    <footer className="mt-20 border-t border-border/70 bg-[#05070D] text-text">
       <div className="container-page py-12">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           {/* Brand + BOT Chain attribution */}
           <div>
             <div className="flex items-center gap-2.5">
               <BrandGlyph size={24} />
-              <span className="text-sm font-semibold tracking-tight text-white">
+              <span className="text-sm font-semibold tracking-tight text-text">
                 CalibraGraph
               </span>
             </div>
-            <p className="mt-3 max-w-sm text-[13px] leading-relaxed text-white/70">
+            <p className="mt-3 max-w-sm text-[13px] leading-relaxed text-muted">
               Calibration certificates and instrument traceability as structured,
               independently verifiable records. Built for laboratories, quality
               teams and metrology professionals.
             </p>
 
             <div className="mt-7">
-              <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">
+              <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted/70">
                 Infrastructure partner
               </p>
               <a
                 href="https://www.botchain.ai/en/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-block rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                className="mt-3 inline-block rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-cobalt/40"
                 title="BOT Chain — botchain.ai"
               >
                 {/* BOT Chain white wordmark, 1031x205 source art, rendered at 28px height */}
@@ -58,30 +58,30 @@ export default function Footer() {
                   href="https://scan.botchain.ai/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/80 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white/70"
+                  className="text-muted underline decoration-border underline-offset-4 transition-colors hover:text-cobalt hover:decoration-cobalt"
                 >
                   BOT Chain Explorer
                 </a>
-                <span className="text-white/60">Built on BOT Chain</span>
+                <span className="text-muted/70">Built on BOT Chain</span>
               </div>
             </div>
           </div>
 
           {/* Platform links */}
           <nav aria-label="Platform">
-            <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">
+            <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted/70">
               Platform
             </p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               {sitemap.slice(0, 5).map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-white/75 transition-colors hover:text-white">
+                  <Link href={l.href} className="text-muted transition-colors hover:text-text">
                     {l.label}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/app/instruments/new" className="text-white/75 transition-colors hover:text-white">
+                <Link href="/app/instruments/new" className="text-muted transition-colors hover:text-text">
                   Register an Instrument
                 </Link>
               </li>
@@ -90,29 +90,29 @@ export default function Footer() {
 
           {/* Legal + verification */}
           <nav aria-label="Resources">
-            <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">
+            <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted/70">
               Resources
             </p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               {sitemap.slice(5).map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-white/75 transition-colors hover:text-white">
+                  <Link href={l.href} className="text-muted transition-colors hover:text-text">
                     {l.label}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/app/verification" className="text-white/75 transition-colors hover:text-white">
+                <Link href="/app/verification" className="text-muted transition-colors hover:text-text">
                   Verify a Certificate
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-white/75 transition-colors hover:text-white">
+                <Link href="/privacy" className="text-muted transition-colors hover:text-text">
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-white/75 transition-colors hover:text-white">
+                <Link href="/terms" className="text-muted transition-colors hover:text-text">
                   Terms
                 </Link>
               </li>
@@ -120,7 +120,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/15 pt-6 text-[12px] text-white/55">
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6 text-[12px] text-muted/70">
           <p>© 2026 CalibraGraph. Calibration history of record.</p>
           <p className="mono">
             <span aria-hidden>◆</span> Anchored on BOT Chain Testnet · chain 968

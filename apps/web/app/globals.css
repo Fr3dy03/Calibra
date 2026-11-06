@@ -2,27 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-bg: #fafcfd;
-  --color-surface: #ffffff;
-  --color-text: #263643;
-  --color-muted: #647584;
-  --color-cobalt: #285dad;
-  --color-teal: #168a91;
+@layer base {
+  :root {
+    --color-bg: #05070d;
+    --color-surface: #0d1424;
+    --color-surface-alt: #090e19;
+    --color-text: #e8eef8;
+    --color-muted: #93a3b8;
+    --color-cobalt: #6366f1;
+    --color-teal: #2dd4bf;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
 }
 
 html {
   scroll-behavior: smooth;
+  background: #05070d;
 }
 
 body {
   @apply bg-bg text-text font-sans antialiased;
   text-rendering: optimizeLegibility;
+  background-image:
+    linear-gradient(rgba(139, 140, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 140, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(60rem 40rem at 85% -10%, rgba(139, 92, 246, 0.14), transparent 62%),
+    radial-gradient(50rem 36rem at -8% 30%, rgba(34, 211, 238, 0.09), transparent 60%),
+    radial-gradient(70rem 50rem at 50% 118%, rgba(59, 130, 246, 0.12), transparent 62%),
+    radial-gradient(44rem 30rem at 62% 42%, rgba(139, 92, 246, 0.05), transparent 60%);
+  background-size:
+    44px 44px,
+    44px 44px,
+    auto,
+    auto,
+    auto,
+    auto;
+  background-attachment: fixed;
+}
+
+/* Ambient aurora drift layer */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 18% 22%, rgba(139, 92, 246, 0.1), transparent 65%),
+    radial-gradient(36rem 26rem at 82% 68%, rgba(45, 212, 191, 0.07), transparent 65%),
+    radial-gradient(40rem 30rem at 55% 110%, rgba(59, 130, 246, 0.08), transparent 65%);
+  animation: aurora 36s ease-in-out infinite alternate;
 }
 
 ::selection {
-  background: #edf3fc;
-  color: #263643;
+  background: #161d38;
+  color: #e8eef8;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #05070d;
+}
+::-webkit-scrollbar-thumb {
+  background: #1b2740;
+  border-radius: 8px;
+  border: 2px solid #05070d;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3a5c;
 }
 
 /* Layout primitives -------------------------------------------------- */
@@ -50,21 +108,36 @@ body {
 
   /* Form fields */
   .field-input {
-    @apply w-full rounded border border-border bg-surface px-3 py-2 text-sm text-text placeholder:text-muted/60 focus:border-cobalt focus:outline-none focus:ring-2 focus:ring-cobalt/25;
+    @apply w-full rounded-lg border border-border bg-surface/80 px-3 py-2 text-sm text-text placeholder:text-muted/60 focus:border-cobalt focus:outline-none focus:ring-2 focus:ring-cobalt/30;
   }
 
   .field-label {
     @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted;
   }
 
+  /* Frosted glass panel — the signature Web3 surface */
+  .glass {
+    @apply rounded-xl border border-border/70 bg-surface/70 shadow-card backdrop-blur-xl;
+  }
+
+  .glass-strong {
+    @apply rounded-xl border border-border/80 bg-surface/90 shadow-card backdrop-blur-2xl;
+  }
+
+  /* Gradient headline text: violet → electric blue → mint teal */
+  .gradient-text {
+    @apply bg-gradient-to-r from-violet via-blue to-cyan bg-clip-text text-transparent;
+  }
+
+  /* Neon glow text for live / verified accents */
+  .text-glow {
+    text-shadow: 0 0 22px rgba(139, 92, 246, 0.55);
+  }
+
   /* Document-like panel used for the certificate preview / certificate detail */
   .certificate-sheet {
-    @apply rounded border border-border bg-surface shadow-card;
-    background-image: linear-gradient(
-      to bottom,
-      #ffffff 0%,
-      #ffffff 100%
-    );
+    @apply rounded-xl border border-border/70 bg-surface/80 shadow-card backdrop-blur;
+    background-image: linear-gradient(to bottom, #0d1424 0%, #090e19 100%);
   }
 }
 
@@ -80,4 +153,21 @@ summary.faq-summary {
 }
 summary.faq-summary::-webkit-details-marker {
   display: none;
+}
+
+/* Reduced motion: ambient animation must degrade to static */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  body::before {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

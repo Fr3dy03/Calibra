@@ -91,7 +91,7 @@ export default function InstrumentTraceabilityPage() {
         <div className="flex flex-wrap gap-3">
           <a
             href="/app/instruments/INS-0101"
-            className="inline-flex items-center justify-center rounded border border-cobalt bg-cobalt px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#224d8d]"
+            className="inline-flex items-center justify-center rounded border border-white/15 bg-gradient-to-r from-violet via-blue to-cyan px-3.5 py-2 text-sm font-medium text-white shadow-glow transition-all hover:brightness-110"
           >
             Open the Fluke 8846A record
           </a>
@@ -117,3 +117,4 @@ export default function InstrumentTraceabilityPage() {
     </>
   );
 }
+

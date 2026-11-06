@@ -9,7 +9,7 @@ export function Eyebrow({ children, className }: { children: React.ReactNode; cl
   return (
     <p
       className={cn(
-        "mono text-[11px] font-semibold uppercase tracking-[0.18em] text-cobalt",
+        "mono text-[11px] font-semibold uppercase tracking-[0.18em] text-transparent bg-gradient-to-r from-violet via-blue to-cyan bg-clip-text",
         className
       )}
     >
@@ -34,7 +34,7 @@ export function MarketingSection({
   className?: string;
 }) {
   return (
-    <section id={id} className={cn("border-t border-border py-14 sm:py-16", className)}>
+    <section id={id} className={cn("border-t border-border/70 py-14 sm:py-16", className)}>
       <div className="container-page">
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         {title && (
@@ -66,10 +66,10 @@ export function PageHero({
     <section className="border-b border-border bg-bg">
       <div className="container-page py-16 sm:py-20">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-text sm:text-4xl sm:leading-tight">
+        <h1 className="mt-4 max-w-3xl font-display text-4xl font-semibold tracking-tight text-text sm:text-5xl sm:leading-[1.06]">
           {title}
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">{lede}</p>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">{lede}</p>
         {children && <div className="mt-7">{children}</div>}
       </div>
     </section>
@@ -130,10 +130,12 @@ export function BulletList({
 
 export function StatRow({ items }: { items: { value: string; label: string }[] }) {
   return (
-    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded border border-border bg-border lg:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/70 bg-border lg:grid-cols-4">
       {items.map((s) => (
-        <div key={s.label} className="bg-surface px-5 py-4">
-          <dd className="mono text-xl font-semibold text-cobalt">{s.value}</dd>
+        <div key={s.label} className="bg-surface/70 px-5 py-4 backdrop-blur">
+          <dd className="mono bg-gradient-to-r from-violet via-blue to-cyan bg-clip-text text-transparent text-xl font-semibold">
+            {s.value}
+          </dd>
           <dt className="mt-1 text-[12px] font-medium text-muted">{s.label}</dt>
         </div>
       ))}

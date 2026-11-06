@@ -109,7 +109,7 @@ export default function VerificationPage() {
               the certificate prefilled.
             </p>
             <div className="rounded border border-border bg-surface p-4">
-              <QRCodeSVG value={verifyUrl} size={148} fgColor="#263643" bgColor="#FFFFFF" level="M" />
+              <QRCodeSVG value={verifyUrl} size={148} fgColor="#05070D" bgColor="#E8EEF8" level="M" />
             </div>
             <p className="mono mt-3 max-w-full break-all text-center text-[10.5px] text-muted">
               {verifyUrl}
@@ -234,3 +234,4 @@ export default function VerificationPage() {
     </>
   );
 }
+

@@ -13,16 +13,16 @@ export function BrandGlyph({ className, size = 28 }: { className?: string; size?
       className={cn("shrink-0", className)}
     >
       {/* crosshair ring */}
-      <circle cx="14" cy="14" r="9.25" stroke="#285DAD" strokeWidth="1.6" />
+      <circle cx="14" cy="14" r="9.25" stroke="#6366F1" strokeWidth="1.6" />
       {/* precision ticks */}
-      <line x1="14" y1="2.75" x2="14" y2="6.25" stroke="#285DAD" strokeWidth="1.6" strokeLinecap="round" />
-      <line x1="14" y1="21.75" x2="14" y2="25.25" stroke="#285DAD" strokeWidth="1.6" strokeLinecap="round" />
-      <line x1="2.75" y1="14" x2="6.25" y2="14" stroke="#285DAD" strokeWidth="1.6" strokeLinecap="round" />
-      <line x1="21.75" y1="14" x2="25.25" y2="14" stroke="#285DAD" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="14" y1="2.75" x2="14" y2="6.25" stroke="#6366F1" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="14" y1="21.75" x2="14" y2="25.25" stroke="#6366F1" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="2.75" y1="14" x2="6.25" y2="14" stroke="#6366F1" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="21.75" y1="14" x2="25.25" y2="14" stroke="#6366F1" strokeWidth="1.6" strokeLinecap="round" />
       {/* centre reading mark (teal measurement point) */}
-      <circle cx="14" cy="14" r="2.4" fill="#168A91" />
-      <line x1="14" y1="7.5" x2="14" y2="11.2" stroke="#168A91" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="14" y1="16.8" x2="14" y2="20.5" stroke="#168A91" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="14" cy="14" r="2.4" fill="#2DD4BF" />
+      <line x1="14" y1="7.5" x2="14" y2="11.2" stroke="#2DD4BF" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="14" y1="16.8" x2="14" y2="20.5" stroke="#2DD4BF" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }
@@ -51,3 +51,4 @@ export default function Brand({
     </Link>
   );
 }
+

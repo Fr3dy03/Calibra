@@ -1,19 +1,21 @@
 import Link from "next/link";
 import { Button, Card, TD, TH, THead, TR, TBody, Table, TableWrap } from "@/components/ui";
-import { CertificatePreview } from "@/components/CertificatePreview";
+import CertificatePreview from "@/components/CertificatePreview";
 import { BulletList, Eyebrow, FeatureGrid, MarketingSection } from "@/components/marketing";
 
 export default function HomePage() {
   return (
     <>
       {/* Hero ---------------------------------------------------------- */}
-      <section className="border-b border-border">
+      <section className="border-b border-border/70">
         <div className="container-page grid gap-12 py-16 sm:py-24 lg:grid-cols-[1.05fr_1fr] lg:items-start">
           <div>
             <Eyebrow>Calibration history of record</Eyebrow>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-text sm:text-[44px] sm:leading-[1.15]">
+            <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight text-text sm:text-[56px] sm:leading-[1.04]">
               Every measurement has a history.{" "}
-              <span className="text-cobalt">Make it verifiable.</span>
+              <span className="bg-gradient-to-r from-violet via-blue to-cyan bg-clip-text text-transparent">
+                Make it verifiable.
+              </span>
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
               Connect instruments, laboratories and calibration evidence through
@@ -35,7 +37,9 @@ export default function HomePage() {
                 { v: "v3.3.0", l: "PTB DCC schema" },
               ].map((s) => (
                 <div key={s.l}>
-                  <dd className="mono text-lg font-semibold text-text">{s.v}</dd>
+                  <dd className="mono bg-gradient-to-r from-violet via-blue to-cyan bg-clip-text text-transparent text-lg font-semibold">
+                    {s.v}
+                  </dd>
                   <dt className="mt-0.5 text-[12px] text-muted">{s.l}</dt>
                 </div>
               ))}

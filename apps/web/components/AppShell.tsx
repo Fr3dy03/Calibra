@@ -69,7 +69,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "block rounded px-2.5 py-1.5 text-[13.5px] font-medium transition-colors",
+                      "block rounded-lg px-2.5 py-1.5 text-[13.5px] font-medium transition-all",
                       active
                         ? "bg-cobaltLight text-cobalt"
                         : "text-muted hover:bg-bg hover:text-text"
@@ -98,7 +98,7 @@ function MobileTabNav() {
   const pathname = useActive();
   const flat = sections.flatMap((s) => s.items.map((i) => ({ ...i, group: s.title })));
   return (
-    <nav aria-label="Application (mobile)" className="mobile-nav border-t border-border bg-surface">
+    <nav aria-label="Application (mobile)" className="mobile-nav border-t border-border bg-surface/80 backdrop-blur">
       <div className="flex gap-1 overflow-x-auto px-3 py-2">
         {flat.map((item, i) => {
           const active = isActive(pathname, item.href);
@@ -108,7 +108,7 @@ function MobileTabNav() {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "whitespace-nowrap rounded px-2.5 py-1.5 text-[12.5px] font-medium",
+                "whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium",
                 active ? "bg-cobaltLight text-cobalt" : "text-muted"
               )}
             >
@@ -125,7 +125,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-bg">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-surface">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-bg/70 backdrop-blur">
         <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Brand href="/app" />

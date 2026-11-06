@@ -22,9 +22,7 @@ export function Card({
   as?: "div" | "section" | "article" | "li";
 }) {
   return (
-    <As className={cn("rounded border border-border bg-surface shadow-card", className)}>
-      {children}
-    </As>
+    <As className={cn("glass", className)}>{children}</As>
   );
 }
 
@@ -79,7 +77,6 @@ const toneDot: Record<string, string> = {
   info: "bg-cobalt",
   neutral: "bg-muted",
 };
-
 export function Badge({
   tone = "neutral",
   children,
@@ -133,16 +130,18 @@ export function statusTone(status: string): string {
 /* ------------------------------------------------------------------ */
 
 const buttonVariants = {
-  primary: "bg-cobalt text-white border-cobalt hover:bg-[#224d8d]",
-  secondary: "bg-surface text-text border-border hover:border-cobalt hover:text-cobalt",
-  ghost: "bg-transparent text-cobalt border-transparent hover:bg-cobaltLight",
-  danger: "bg-surface text-critical border-critical/40 hover:bg-critical/10",
+  primary:
+    "border border-white/15 bg-gradient-to-r from-violet via-blue to-cyan text-white shadow-glow hover:brightness-110 hover:shadow-glow focus-visible:ring-2 focus-visible:ring-violet/60",
+  secondary:
+    "border border-border/70 bg-surface/70 text-text backdrop-blur hover:border-cobalt/60 hover:text-cobalt focus-visible:ring-2 focus-visible:ring-cobalt/40",
+  ghost: "border-transparent bg-transparent text-cobalt hover:bg-cobaltLight focus-visible:ring-2 focus-visible:ring-cobalt/40",
+  danger: "border border-critical/40 bg-surface text-critical hover:bg-critical/10 focus-visible:ring-2 focus-visible:ring-critical/40",
 } as const;
 
 const buttonSizes = {
-  sm: "px-2.5 py-1 text-xs",
+  sm: "px-3 py-1.5 text-xs",
   md: "px-3.5 py-2 text-sm",
-  lg: "px-5 py-2.5 text-sm",
+  lg: "px-6 py-3 text-sm",
 } as const;
 
 export function Button({
@@ -160,7 +159,7 @@ export function Button({
   children: React.ReactNode;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const classes = cn(
-    "inline-flex items-center justify-center gap-2 rounded border font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cobalt/40 disabled:opacity-50",
+    "inline-flex items-center justify-center gap-2 rounded border font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cobalt/40 disabled:opacity-50",
     buttonVariants[variant],
     buttonSizes[size],
     className
@@ -266,7 +265,7 @@ export function EmptyState({ title, note }: { title: string; note?: string }) {
     <div className="px-4 py-10 text-center">
       <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-tealLight">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <circle cx="8" cy="8" r="5.5" stroke="#168A91" strokeWidth="1.4" />
+          <circle cx="8" cy="8" r="5.5" stroke="#2DD4BF" strokeWidth="1.4" />
         </svg>
       </div>
       <p className="text-sm font-medium text-text">{title}</p>
@@ -368,3 +367,4 @@ export function KeyValueList({
     </dl>
   );
 }
+

@@ -144,8 +144,8 @@ export default function ImportCertificatesPage() {
               aria-label="Upload XML file"
             >
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden className="mb-3">
-                <path d="M14 20V6m0 0-5.5 5.5M14 6l5.5 5.5" stroke="#285DAD" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M4 22.5h20" stroke="#168A91" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M14 20V6m0 0-5.5 5.5M14 6l5.5 5.5" stroke="#6366F1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4 22.5h20" stroke="#2DD4BF" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
               <p className="text-sm font-medium text-text">Drag & drop the .xml document here</p>
               <p className="mt-1 text-[12.5px] text-muted">
@@ -421,3 +421,4 @@ export default function ImportCertificatesPage() {
     </>
   );
 }
+

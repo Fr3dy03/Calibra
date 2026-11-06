@@ -26,7 +26,7 @@ export default function ConfirmAction({
       </Button>
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#263643]/50 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#05070D]/70 p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="confirm-title"
@@ -56,3 +56,4 @@ export default function ConfirmAction({
     </>
   );
 }
+
