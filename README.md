@@ -68,6 +68,37 @@ forge script script/Deploy.s.sol --rpc-url https://rpc.bohr.life --broadcast --v
 
 Mainnet (chain 677) is gated behind the readiness checklist in `docs/INTEGRATION_LIMITATIONS.md`.
 
+#### Testnet deployment runbook (preparation-complete)
+
+The deploy script (`contracts/script/Deploy.s.sol`) compiles and is covered by the
+full test suite; it deploys `CalibrationRegistry`, bootstraps `LAB_ADMIN_ROLE` /
+`INSTRUMENT_OWNER_ROLE` from `LAB_ADMIN_ADDRESS` / `INSTRUMENT_OWNER_ADDRESS` when set,
+and writes the artifact to `contracts/deployments/latest.json`.
+
+1. Fund the deployer private key via the official BOT Chain testnet faucet
+   (chain 968, RPC `https://rpc.bohr.life`).
+2. `export DEPLOYER_PRIVATE_KEY=0x…` (testnet) and run:
+
+   ```bash
+   forge script script/Deploy.s.sol --rpc-url https://rpc.bohr.life --broadcast
+   ```
+
+3. Wire the fresh deployment into the API:
+
+   ```bash
+   # apps/api/.env
+   CHAIN_ID=968
+   BOT_MAINNET_RPC_URL=https://rpc.botchain.ai
+   BOT_TESTNET_RPC_URL=https://rpc.bohr.life
+   REGISTRY_ADDRESS=<deployed-address-from-forge-output>
+   REGISTRY_DEPLOYER_KEY=0x…
+   ```
+
+4. Restart the API (`npm run start:dev`), then run the end-to-end flow:
+   register laboratory → register instrument → import DCC → validate → issue → verify → supersede.
+   Writes to the registry are no-ops until `REGISTRY_DEPLOYER_KEY` + `REGISTRY_ADDRESS` are set;
+   without them the API logs a warning and simulates anchors (development mode).
+
 ## The DCC pipeline (why we don't touch your numbers)
 
 1. bytes preserved → sha-256/keccak-256 digests
