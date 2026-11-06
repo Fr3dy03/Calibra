@@ -39,7 +39,7 @@ Public (no auth): `POST /auth/register`, `POST /auth/login`, `GET /verify/:certi
 
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/verify/:certificateId` | works with uuid, DCC uniqID or on-chain id; includes `blockchain.digestMatch`, `explorerUrl` (BOTScan) |
+| GET | `/verify/:certificateId` | works with uuid, DCC uniqueIdentifier or on-chain id; includes `blockchain.digestMatch`, `explorerUrl` (BOTScan) |
 
 ## Reports
 

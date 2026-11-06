@@ -52,8 +52,6 @@ export default function InstrumentDetailPage({
   const current = certs.find((c) => c.status === "current");
   const lab = current ? laboratoryById(current.laboratoryId) : undefined;
 
-  const heroImageAlt = `${instrument.name} — instrument record`;
-
   return (
     <>
       <PageHeading
@@ -90,7 +88,6 @@ export default function InstrumentDetailPage({
             <Badge tone="critical">None on record</Badge>
           )}
         </div>
-        <p aria-hidden className="hidden">{heroImageAlt}</p>
       </Card>
 
       {/* Section navigation */}

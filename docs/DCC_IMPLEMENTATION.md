@@ -23,7 +23,7 @@ Upload (.xml)
                   └─► [6] Persistence
                         • Raw XML preserved verbatim
                         • Exact decimals as string (DECIMAL columns, never float)
-                        • Units preserved verbatim (si-unit / si-label)
+                        • Units preserved verbatim (si:unit / BIPM notation)
                         • status = IMPORTED (or PENDING_VALIDATION, or VALID_SCHEMA)
 ```
 
@@ -41,23 +41,25 @@ Rules enforced by the pipeline:
 
 ## 2. Field extraction map (v3.3.0)
 
-| CalibraGraph model | DCC path |
+| CalibraGraph model | DCC v3.3.0 element |
 |---|---|
-| `certificateUid` | `administrativeData/coreData/uniqID` |
-| `issueDate` | `administrativeData/coreData/issueDate` |
-| `validUntil` | `administrativeData/coreData/periodOfValidity` |
-| `lang` / `formatVersion` | root `@schemaVersion` (e.g. `3.3.0`) |
-| Laboratory | `administrativeData/calibrationLaboratory/name+contact+address` |
+| `certificateUid` | `administrativeData/coreData/uniqueIdentifier` |
+| `issueDate` | `administrativeData/coreData/issueDate` (optional) |
+| `validUntil` | `administrativeData/coreData/endPerformanceDate` |
+| `beginPerformanceDate` | `administrativeData/coreData/beginPerformanceDate` |
+| `performanceLocation` | `administrativeData/coreData/performanceLocation` |
+| `documentLang` | `administrativeData/coreData/usedLangCodeISO639_1` / `mandatoryLangCodeISO639_1` |
+| Laboratory | `administrativeData/calibrationLaboratory` (`calibrationLaboratoryCode`, `contact`) |
 | Responsible persons | `administrativeData/respPersons/respPerson` (name, role, mail) |
-| Customer / owner | `administrativeData/customer/name+contact+address` |
-| Item / instrument | `administrativeData/items/item` (name, manufacturer, model, identifications incl. serial) |
-| Measurement function | `measurementResults/usedMethods/method/name` |
-| Results table | `measurementResults/results` → each `result/data/measurementData` |
-| Value + unit | `dcc:numerical` → `dc:value` (xs:decimal, preserved) + `si-unit` |
-| Expanded uncertainty | `dcc:quantity/expandedUnc` → `uExpanded/dc:value`, `coverageFactor`, `coverageProbability` |
-| Conditions | `measurementResults/influenceConditions/influencingQuantity` (e.g. 23.1 °C, 41 %RH) |
-| Reference standards | equipment entities referenced by `refType` from results (mapped to `ReferenceStandard`) |
-| Comments | `dcc:comment` |
+| Customer / owner | `administrativeData/customer` |
+| Instrument / serial | `administrativeData/items/item` (name, manufacturer, model, `identifications/identification/issuer+value`) |
+| Measurement function | `measurementResults/measurementResult/usedMethods/usedMethod` |
+| Results table | `measurementResults/measurementResult/results/result` → `data/quantity` |
+| Value + unit | `si:real` → `si:value` (exact decimal) + `si:unit` (BIPM notation) |
+| Expanded uncertainty | `si:real/measurementUncertaintyUnivariate/expandedMU` → `si:valueExpandedMU`, `si:coverageFactor`, `si:coverageProbability` |
+| Conditions | `measurementResults/influenceConditions/influenceCondition` |
+| Reference standards | `measurementResults/measuringEquipments` + `usedMethods`, linked via `id`/`refId`/`refType` |
+| Comments | root `dcc:comment` (lax content) |
 | Attachments | `dcc:document/document/fileName+mimeType+dataBase64` (stored to encrypted object storage) |
 | Signatures | `ds:Signature*` — presence, count, KeyInfo/X509Subject when present |
 
@@ -104,7 +106,9 @@ held `CALIBRATION_ISSUER_ROLE` address with an active `IssuerScope` deliberately
 | Invalid XML (broken structure) | `dcc-invalid-structure.xml` | XSD findings, no parsing |
 | Unsupported schema version | `dcc-v9.xml` | `DCC_SCHEMA_UNSUPPORTED`, fail-closed |
 | Missing required values | `dcc-missing-value.xml` | findings `REQUIRED_FIELD_*` |
-| Incorrect unit | `dcc-bad-unit.xml` | finding `UNIT_UNKNOWN` (si-unit not resolvable), unit preserved verbatim |
+| Incorrect unit | `dcc-bad-unit.xml` | finding `UNIT_UNKNOWN` (si:unit not resolvable), unit preserved verbatim |
 | Duplicate certificate | importer test | 409 `CERTIFICATE_DUPLICATE` |
 | Signature missing where required by policy | `dcc-unsigned.xml` | finding `SIGNATURE_MISSING`, blocks issue until approved via revision flow |
 | Superseded certificate | importer test | duplicates rejected by digest + certificateUid |
+
+

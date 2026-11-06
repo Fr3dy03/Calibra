@@ -50,14 +50,12 @@ contract CalibrationRegistryTests is Test {
         issueDate = uint64(block.timestamp);
         validUntil = uint64(block.timestamp + 365 days);
 
-        vm.prank(admin);
+        // The test contract itself holds DEFAULT_ADMIN_ROLE (constructor msg.sender).
         registry.grantRole(LAB_ADMIN, labAdmin);
-        vm.prank(admin);
         registry.grantRole(INSTRUMENT_OWNER, owner);
         vm.startPrank(labAdmin);
         registry.registerLaboratory(labId, profileHash);
         vm.stopPrank();
-        vm.prank(admin);
         registry.approveLaboratory(labId);
         vm.prank(labAdmin);
         registry.setIssuerScope(issuer, scopeHash, true);
@@ -74,7 +72,6 @@ contract CalibrationRegistryTests is Test {
 
     function test_LaboratoryApprovalGatesIssuerScopes() public {
         address lab2Admin = makeAddr("lab2-admin");
-        vm.prank(admin);
         registry.grantRole(LAB_ADMIN, lab2Admin);
         vm.prank(lab2Admin);
         registry.registerLaboratory(keccak256("lab-2"), profileHash);
@@ -179,7 +176,7 @@ contract CalibrationRegistryTests is Test {
         // historical record remains fully intact on-chain
         assertEq(old.certificateDigest, digestA);
         assertEq(old.issuer, issuer);
-        assertEq(old.status, CalibrationRegistry.CertificateStatus.Superseded);
+        assertEq(uint256(old.status), uint256(CalibrationRegistry.CertificateStatus.Superseded));
     }
 
     // ---------------- replay / duplicate protection ----------------
@@ -193,7 +190,8 @@ contract CalibrationRegistryTests is Test {
 
     function test_OriginalIssuedTwiceFailsKeyConflict() public {
         assertTrue(_issue(certA, digestA, 1, bytes32(0)));
-        vm.expectRevert(CalibrationRegistry.KeyConflict.selector);
+        vm.expectRevert(abi.encodeWithSelector(
+            CalibrationRegistry.KeyConflict.selector, instrumentId, certA, bytes32(0)));
         vm.prank(issuer);
         registry.issueCalibration(certB, instrumentId, digestB, measHash, refHash, issueDate, validUntil, 1, bytes32(0));
     }

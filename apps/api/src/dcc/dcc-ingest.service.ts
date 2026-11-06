@@ -110,29 +110,29 @@ export class DccPreviewService {
     });
 
     if (extraction) {
+      let resultIndex = 0;
       for (const result of extraction.results) {
-        for (const [i, value] of result.values.entries()) {
-          const measurement = await this.prisma.calibrationMeasurement.create({
+        const measurement = await this.prisma.calibrationMeasurement.create({
+          data: {
+            certificateId: cert.id,
+            resultIndex: resultIndex++,
+            quantityName: result.resultName,
+            refMethodRef: undefined,
+            valueDecimal: result.decimal ?? '',
+            unit: result.unit ?? '',
+          },
+        });
+        if (result.expandedUnc?.decimal) {
+          await this.prisma.measurementUncertainty.create({
             data: {
-              certificateId: cert.id,
-              resultIndex: i,
-              quantityName: result.quantityName,
-              refMethodRef: result.refMethodRef,
-              valueDecimal: value.decimal ?? '',
-              unit: value.SIunit ?? value.SIlabel ?? '',
+              measurementId: measurement.id,
+              expandedDecimal: result.expandedUnc.decimal,
+              unit: result.expandedUnc.unit ?? result.unit ?? '',
+              coverageFactor: result.expandedUnc.coverageFactor,
+              coverageProbability: result.expandedUnc.coverageProbability,
+              distribution: result.expandedUnc.distribution,
             },
           });
-          if (result.expandedUnc?.decimal) {
-            await this.prisma.measurementUncertainty.create({
-              data: {
-                measurementId: measurement.id,
-                expandedDecimal: result.expandedUnc.decimal,
-                unit: result.expandedUnc.unit ?? value.SIunit ?? '',
-                coverageFactor: result.expandedUnc.coverageFactor,
-                coverageProbability: result.expandedUnc.coverageProbability,
-              },
-            });
-          }
         }
       }
     }
@@ -160,11 +160,16 @@ export class DccPreviewService {
 export function hashMeasurements(ex: DccExtraction): string {
   const canonical = JSON.stringify(
     ex.results.map((r) => ({
-      name: r.quantityName, ref: r.refMethodRef,
-      values: r.values.map((v) => ({ u: v.SIunit ?? v.SIlabel ?? '', d: v.decimal ?? '' })),
-      unc: r.expandedUnc ? { d: r.expandedUnc.decimal, u: r.expandedUnc.unit, k: r.expandedUnc.coverageFactor, p: r.expandedUnc.coverageProbability } : null,
-    })),
-    Object.keys({}).concat(['c', 'd', 'c'] as never) as never, // placeholder to keep signature; canonical key sorting handled by stable stringify
+      g: r.measurementResultName ?? '',
+      n: r.resultName,
+      l: r.label ?? '',
+      v: r.decimal ?? '',
+      u: r.unit ?? '',
+      unc: r.expandedUnc ? {
+        v: r.expandedUnc.decimal ?? '', u: r.expandedUnc.unit ?? '',
+        k: r.expandedUnc.coverageFactor ?? '', p: r.expandedUnc.coverageProbability ?? '',
+      } : null,
+    })).sort((a, b) => (a.n + a.l).localeCompare(b.n + b.l)),
   );
   return keccak256(sha256(canonical));
 }

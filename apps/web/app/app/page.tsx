@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardHeader,
-  EmptyState,
   TD,
   TH,
   THead,
@@ -21,7 +20,6 @@ import {
   dueRows,
   instrumentById,
 } from "@/lib/data";
-
 const recentCerts = certificates
   .filter((c) => c.status === "current" || c.status === "expired")
   .slice(0, 5);

@@ -17,61 +17,78 @@ describe('DCC schema detection', () => {
     const report = validateAgainstXsd(sample(), '9.9.9');
     expect(report.valid).toBe(false);
     expect(report.findings[0].code).toBe('DCC_SCHEMA_UNSUPPORTED');
+    expect(report.findings[0].message).toMatch(/refusing best-effort parsing/);
   });
 });
 
-describe('DCC parsing — value fidelity', () => {
-  it('preserves exact decimals as strings (no numeric coercion)', () => {
+describe('DCC parsing — value fidelity (structure verified against pinned dcc.xsd v3.3.0)', () => {
+  it('preserves exact decimals as strings (no numeric coercion, trailing digits kept)', () => {
     const ex = parseDcc(sample());
-    const ten = ex.results[0].values;
-    expect(ten.some((v) => v.decimal === '0.000000')).toBe(true);
-    // trailing zero is preserved — typed as string
-    expect(typeof ten[0].decimal === 'string').toBe(true);
+    // 9.9990350 has a significant trailing zero — must survive parse untouched
+    expect(ex.results.some((r) => r.decimal === '9.9990350')).toBe(true);
+    expect(typeof ex.results[0].decimal === 'string').toBe(true);
   });
 
-  it('preserves SI units verbatim', () => {
+  it('preserves SI units verbatim (BIPM notation)', () => {
     const ex = parseDcc(sample());
-    const units = ex.results.flatMap((r) => r.values.map((v) => v.SIunit));
-    expect(units).toContain('V');
+    const units = ex.results.map((r) => r.unit);
+    expect(units.filter((u) => u === '\\volt').length).toBe(3);
+    expect(ex.influenceConditions[0].unit).toBe('\\celsius');
   });
 
-  it('extracts administrative data', () => {
+  it('extracts administrative data per v3.3.0 (uniqueIdentifier, performance dates)', () => {
     const ex = parseDcc(sample());
     expect(ex.certificateUid).toBe('DCC-RML-2026-0417');
-    expect(ex.issueDate).toBe('2026-03-12');
-    expect(ex.validUntil).toBe('2027-03-11');
+    expect(ex.issueDate).toBe('2026-03-15');
+    expect(ex.validUntil).toBe('2027-03-11'); // endPerformanceDate → certificate due date
+    expect(ex.performanceLocation).toBe('laboratory');
+    expect(ex.documentLang).toBe('en');
     expect(ex.laboratory?.name).toBe('Rhein Metrology Laboratory');
-    expect(ex.respPersons?.length).toBeGreaterThan(0);
-    expect(ex.items?.[0]?.identifications?.[0]?.value).toBe('2451A7821');
+    expect(ex.laboratory?.code).toBe('RML-2001');
+    expect(ex.laboratory?.address).toMatch(/Cologne/);
+    expect(ex.respPersons.length).toBe(2);
+    expect(ex.items[0].identifications[0].value).toBe('2451A7821');
+    expect(ex.items[0].manufacturer).toBe('Fluke Corporation');
   });
 
-  it('extracts expanded uncertainty with coverage factor and probability', () => {
+  it('extracts expanded uncertainty from si:expandedMU (U, k, coverage probability)', () => {
     const ex = parseDcc(sample());
     const unc = ex.results[0].expandedUnc;
-    expect(unc?.decimal).toBe('11.5');
-    expect(unc?.unit).toBe('uV/V');
+    expect(unc?.decimal).toBe('0.000115');
+    expect(unc?.unit).toBe('\\volt');
     expect(unc?.coverageFactor).toBe('2');
-    expect(unc?.coverageProbability).toBe('0.9545');
+    expect(unc?.coverageProbability).toBe('0.95');
+    expect(unc?.distribution).toBe('normal');
   });
 
   it('extracts influence conditions', () => {
     const ex = parseDcc(sample());
-    const temp = ex.influenceConditions[0];
-    expect(temp?.name).toBe('Ambient temperature');
-    expect(temp?.values?.[0]?.decimal).toBe('23.1');
+    expect(ex.influenceConditions[0].name).toBe('Ambient temperature');
+    expect(ex.influenceConditions[0].decimal).toBe('23.1');
+    expect(ex.influenceConditions[1].decimal).toBe('41.0');
   });
 
-  it('detects ds:Signature presence', () => {
+  it('reports no signature when the document carries none', () => {
     const ex = parseDcc(sample());
+    expect(ex.signatureRefs.some((s) => s.hasSignature)).toBe(false);
+  });
+
+  it('detects ds:Signature presence when present', () => {
+    const withSig = sample().replace('</dcc:comment>', '</dcc:comment><ds:Signature Id="s1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"/>');
+    const ex = parseDcc(withSig);
     expect(ex.signatureRefs.some((s) => s.hasSignature)).toBe(true);
   });
 
-  it('rejects malformed XML', () => {
-    // the simulator intentionally keeps this fixture invalid
-    expect(() => parseDcc(load('dcc-invalid-structure.xml'))).toThrow(/well-formed|not a DCC|Structure/i);
+  it('rejects malformed XML fail-closed', () => {
+    expect(() => parseDcc(load('dcc-invalid-structure.xml'))).toThrow(/well-formed/i);
   });
 
   it('rejects wrong root element', () => {
-    expect(() => parseDcc('<invoice id="1"/>')).toThrow(/not a DCC|root/i);
+    expect(() => parseDcc('<invoice id="1"/>')).toThrow(/not a DCC/i);
+  });
+
+  it('rejects documents without schemaVersion', () => {
+    const unversioned = '<dcc:digitalCalibrationCertificate xmlns:dcc="https://ptb.de/dcc"/>';
+    expect(() => parseDcc(unversioned)).toThrow(/schemaVersion/i);
   });
 });

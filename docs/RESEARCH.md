@@ -40,51 +40,75 @@ Key properties verified from the official PTB schema documentation
   used to establish the precise relationships between results and
   their provenance.
 
-### 1.2 Verified top-level structure (v3.3.0)
+### 1.2 Verified top-level structure (v3.3.0 — verified against the pinned XSD)
 
 ```
 dcc:digitalCalibrationCertificate (root, @schemaVersion required)
 ├── dcc:administrativeData        (1)
-│   ├── dcc:dccSoftware           (1, software list: name {content lang}, release, type enum, description)
-│   ├── dcc:refTypeDefinitions    (0..1)
+│   ├── dcc:dccSoftware           (1, software list: name {content lang}, release, type enum)
 │   ├── dcc:coreData              (1)
+│   │     countryCodeISO3166_1, usedLangCodeISO639_1 (1..n),
+│   │     mandatoryLangCodeISO639_1 (1..n),
+│   │     uniqueIdentifier, identifications?, receiptDate?,
+│   │     beginPerformanceDate, endPerformanceDate, performanceLocation,
+│   │     issueDate?, reportAmendedSubstituted?, previousReport?
 │   ├── dcc:items                 (1, the calibrated items)
-│   ├── dcc:calibrationLaboratory (1)
-│   ├── dcc:respPersons           (1, responsible persons incl. signatories)
-│   ├── dcc:customer              (1)
+│   ├── dcc:calibrationLaboratory (1, contact type: calibrationLaboratoryCode? + contact)
+│   ├── dcc:respPersons           (1, responsible persons incl. signatories + mainSigner)
+│   ├── dcc:customer              (1, contact)
 │   └── dcc:statements            (0..1)
 ├── dcc:measurementResults        (1)
-├── dcc:comment                   (0..1, richContent)
+│     usedMethods?, usedSoftware?, measuringEquipments?, influenceConditions?,
+│     measurementMetaData?, measurementResult+ (each: name, results/result/data)
+├── dcc:comment                   (0..1, lax content)
 ├── dcc:document                  (0..1, attachments: fileName, mimeType, dataBase64)
 └── ds:Signature                  (0..n, W3C XML-DSig)
 ```
 
-Fields CalibraGraph extracts (mapping in `docs/DCC_IMPLEMENTATION.md`):
+Key facts confirmed by reading the official `dcc.xsd` v3.3.0 directly
+(bundled+pinned under `apps/api/schemas/dcc/v3.3.0/`):
 
-| Concern | DCC element |
+- The certificate identifier field is **`coreData/uniqueIdentifier`** (not `uniqID`).
+- There is **no `periodOfValidity` element in v3.3.0**. The certificate period is
+  carried by **`beginPerformanceDate` / `endPerformanceDate`**;
+  CalibraGraph derives the certificate due date from `endPerformanceDate`.
+- Values are D-SI quantities: `dcc:quantity` wraps a single choice of
+  `si:real | si:list | si:hybrid | ...`; `si:real` carries `si:value` (xs:double),
+  `si:unit` (BIPM notation, e.g. `\volt`, `\celsius`) and, optionally,
+  `si:measurementUncertaintyUnivariate > si:expandedMU`
+  (`si:valueExpandedMU`, `si:coverageFactor`, `si:coverageProbability`).
+
+Fields CalibraGraph extracts (full mapping in `docs/DCC_IMPLEMENTATION.md`):
+
+| Concern | DCC v3.3.0 element |
 |---|---|
-| Certificate identity / issue date | `administrativeData/coreData` (uniqID, issueDate, periodOfValidity) |
-| Calibrated item / serial | `administrativeData/items` |
-| Issuing laboratory | `administrativeData/calibrationLaboratory` |
-| Responsible persons / signers | `administrativeData/respPersons` |
+| Certificate identity | `administrativeData/coreData/uniqueIdentifier` |
+| Issue / performance dates | `coreData/issueDate`, `coreData/beginPerformanceDate`, `coreData/endPerformanceDate` |
+| Calibrated item / serial | `administrativeData/items/item` (name, manufacturer, model, `identifications/identification/issuer+value`) |
+| Issuing laboratory | `administrativeData/calibrationLaboratory` (`calibrationLaboratoryCode`, `contact`) |
+| Responsible persons / signers | `administrativeData/respPersons/respPerson` (`person`, `role`, `mainSigner`) |
 | Customer / instrument owner | `administrativeData/customer` |
-| Measurement results | `measurementResults/result` → `measurementData` + `usedMethods` + `influenceConditions` |
-| Values, units | `dcc:numericalType` (`dc:value`, `si-unit`, `si-label`), decimal as `xs:decimal` |
-| Uncertainty | `quantityType/expandedUnc` (`uExpanded`, `coverageFactor`, `coverageProbability`) |
-| Reference standards (traceability) | `measurementResults/usedMethods/usedSoftware`, `item/definitionResponsible` and equipment links via `refType` — codified in D-SI usage |
+| Measurement results | `measurementResults/measurementResult/results/result` → `data/quantity` |
+| Value, unit | `si:real` → `si:value` (exact decimal passthrough) + `si:unit` (BIPM notation) |
+| Expanded uncertainty | `si:real/measurementUncertaintyUnivariate/expandedMU` → `valueExpandedMU`, `coverageFactor`, `coverageProbability` |
+| Conditions | `measurementResults/influenceConditions/influenceCondition` (name + `data/quantity`) |
+| Reference standards (traceability) | `measurementResults/measuringEquipments` (+ `usedMethods/usedMethod`), entity names/resolutions via `id`/`refId`/`refType` |
 
 ### 1.3 The D-SI unit system
 
-The DCC does not use free-form unit strings. It uses **D-SI** (Digital System of Units,
-metadata schema from the EU project *SmartCom*) with the `si-unit`/`si-label` pair, plus
-`si-real` / `si-hybrid` values. Practical consequences for CalibraGraph:
+The DCC does not use free-form unit strings. Values live in D-SI (Digital System of
+Units, from the EU project *SmartCom*): `si:real` pairs an exact `xs:double`-spelled
+`si:value` with a `si:unit` in BIPM SI notation (`\volt`, `\celsius`, `\one`).
+Uncertainty is a first-class object inside the same `si:real`
+(`expandedMU` with factor k and coverage probability). Practical consequences
+for CalibraGraph:
 
-1. We **preserve the literal decimal** (`xs:decimal`) — never a binary float — as the
+1. We **preserve the exact decimal** (`si:value`) — never a binary float — as the
    canonical value. Digits are stored exactly as given.
 2. We **preserve the SI unit identifier**, not a display-localised unit.
 3. We never display a unit without its value, and vice versa.
-4. Uncertainty is a first-class object (`uExpanded` + `coverageFactor` +
-   `coverageProbability`), not a free-text remark.
+4. Uncertainty is a first-class object (`si:expandedMU` → U, `si:coverageFactor` k,
+   `si:coverageProbability`), not a free-text remark.
 
 ### 1.4 Other standards considered
 

@@ -216,6 +216,23 @@ contract CalibrationRegistry is AccessControl {
         uint32 revision,
         bytes32 supersedesId
     ) external returns (bool) {
+        return _issue(
+            certificateId, instrumentId, certificateDigest, measurementScopeHash,
+            referenceStandardHash, issueDate, validUntil, revision, supersedesId
+        );
+    }
+
+    function _issue(
+        bytes32 certificateId,
+        bytes32 instrumentId,
+        bytes32 certificateDigest,
+        bytes32 measurementScopeHash,
+        bytes32 referenceStandardHash,
+        uint64 issueDate,
+        uint64 validUntil,
+        uint32 revision,
+        bytes32 supersedesId
+    ) internal returns (bool) {
         if (!issuerScopes[msg.sender].active) revert IssuerScopeInactive();
 
         Instrument memory inst = instruments[instrumentId];
@@ -228,6 +245,7 @@ contract CalibrationRegistry is AccessControl {
         // The previous certificate must actually be the current one (replay / fork guard).
         bytes32 currentId = currentCertificate[instrumentId];
         bool isOriginal = (revision == 1 && supersedesId == bytes32(0));
+        if (isOriginal && currentId != bytes32(0)) revert KeyConflict(instrumentId, currentId, supersedesId);
         if (!isOriginal && currentId != supersedesId) revert KeyConflict(instrumentId, currentId, supersedesId);
 
         CalibrationCertificate memory cert;
@@ -285,7 +303,7 @@ contract CalibrationRegistry is AccessControl {
         if (prev.status != CertificateStatus.Issued) revert CertificateNotCurrent();
         if (currentCertificate[instrumentId] != previousCertificateId) revert CertificateNotCurrent();
 
-        return issueCalibration({
+        return _issue({
             certificateId: newCertificateId,
             instrumentId: instrumentId,
             certificateDigest: certificateDigest,

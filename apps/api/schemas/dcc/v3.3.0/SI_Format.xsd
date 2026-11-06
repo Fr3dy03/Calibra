@@ -40,7 +40,7 @@
     </xs:annotation>
     
 	<!-- Importing used namespaces -->
-    <xs:import namespace="http://qudt.org/vocab/" schemaLocation="https://www.ptb.de/si/v2.2.1/qudt/quantitykind.xsd"/>
+    <xs:import namespace="http://qudt.org/vocab/" schemaLocation="qudt/quantitykind.xsd"/>
     
       
 
@@ -1572,3 +1572,4 @@
     </xs:element>
     
 </xs:schema>
+

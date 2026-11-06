@@ -163,7 +163,7 @@ export default function HomePage() {
               body: "The certificate detail view is laid out like a paper certificate an assessor would recognise: header, results table, uncertainty statement, conditions, signatures.",
             },
             {
-              title: "Right.unit discipline",
+              title: "Right-unit discipline",
               body: "Units always accompany values. Uncertainties carry their coverage factor. Serials and measured values render in monospaced type for character-accurate reading.",
             },
             {

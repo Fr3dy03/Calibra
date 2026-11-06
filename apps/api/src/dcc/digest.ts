@@ -6,6 +6,11 @@ export function keccak256(hexDigest: string): string {
   return toKeccakFromHex(`0x${hexDigest}`);
 }
 
-export function sha256Hex(bytes: Buffer): string {
-  return createHash('sha256').update(bytes).digest('hex');
+export function sha256(content: Buffer | string): string {
+  return createHash('sha256').update(content).digest('hex');
 }
+
+export function sha256Hex(bytes: Buffer): string {
+  return sha256(bytes);
+}
+
