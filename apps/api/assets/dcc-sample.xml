@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sample DCC (Digital Calibration Certificate) conforming to PTB dcc.xsd v3.3.0 structure.
+  Used as the fixture for API tests and frontend demo data. Values describe a
+  DC voltage calibration of a Fluke 8846A digital multimeter performed against
+  a 10 V DC voltage standard.
+
+  Authors of the fictional content: CalibraGraph demo data; numbers chosen to be
+  technically plausible (expanded uncertainty k=2 is ~ one order below the range).
+-->
+<dcc:digitalCalibrationCertificate xmlns:dcc="https://ptb.de/dcc" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:dc="https://ptb.de/dsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="3.3.0" uniqueIdentifier="CG-DCC-2026-0417">
+  <dcc:administrativeData>
+    <dcc:dccSoftware>
+      <dcc:software>
+        <dcc:name>
+          <dcc:content lang="de">DCC-Tool</dcc:content>
+          <dcc:content lang="en">DCC-Tool</dcc:content>
+        </dcc:name>
+        <dcc:release>3.1.5</dcc:release>
+        <dcc:type>application</dcc:type>
+      </dcc:software>
+    </dcc:dccSoftware>
+    <dcc:coreData>
+      <dcc:countryCodeISO3166_1>DE</dcc:countryCodeISO3166_1>
+      <dcc:lang>en</dcc:lang>
+      <dcc:decl>
+        <dcc:content lang="en">certificate</dcc:content>
+      </dcc:decl>
+      <dcc:uniqID>DCC-RML-2026-0417</dcc:uniqID>
+      <dcc:identifications>
+        <dcc:identification>
+          <dcc:issuer>calibrationLaboratory</dcc:issuer>
+          <dcc:value>CG-RML-2026-0417</dcc:value>
+        </dcc:identification>
+      </dcc:identifications>
+      <dcc:issueDate>
+        <dcc:content>2026-03-12</dcc:content>
+      </dcc:issueDate>
+      <dcc:periodOfValidity>
+        <dcc:content>2027-03-11</dcc:content>
+      </dcc:periodOfValidity>
+    </dcc:coreData>
+    <dcc:items>
+      <dcc:item>
+        <dcc:name>
+          <dcc:content lang="en">Digital Multimeter</dcc:content>
+        </dcc:name>
+        <dcc:manufacturer>
+          <dcc:content lang="en">Fluke Corporation</dcc:content>
+        </dcc:manufacturer>
+        <dcc:model>8846A</dcc:model>
+        <dcc:identifications>
+          <dcc:identification>
+            <dcc:issuer>customer</dcc:issuer>
+            <dcc:value id="DEVICE-SERIAL">2451A7821</dcc:value>
+          </dcc:identification>
+        </dcc:identifications>
+      </dcc:item>
+    </dcc:items>
+    <dcc:calibrationLaboratory>
+      <dcc:name>
+        <dcc:content lang="en">Rhein Metrology Laboratory</dcc:content>
+      </dcc:name>
+      <dcc:address>
+        <dcc:street>Messwerkstrasse 14</dcc:street>
+        <dcc:zipCode>50823</dcc:zipCode>
+        <dcc:city>Cologne</dcc:city>
+        <dcc:countryCode>DE</dcc:countryCode>
+      </dcc:address>
+      <dcc:trustLab>ILAC MRA — Accreditation No. A-11847 (recorded evidence)</dcc:trustLab>
+    </dcc:calibrationLaboratory>
+    <dcc:respPersons>
+      <dcc:respPerson>
+        <dcc:person>
+          <dcc:name>
+            <dcc:content lang="en">Dr. Annelie Vogt</dcc:content>
+          </dcc:name>
+        </dcc:person>
+        <dcc:role>
+          <dcc:content lang="en">Technical manager</dcc:content>
+        </dcc:role>
+        <dcc:mail>a.vogt@rhein-metrology.example</dcc:mail>
+      </dcc:respPerson>
+      <dcc:respPerson>
+        <dcc:person>
+          <dcc:name>
+            <dcc:content lang="en">Jonas Krämer</dcc:content>
+          </dcc:name>
+        </dcc:person>
+        <dcc:role>
+          <dcc:content lang="en">Metrologist</dcc:content>
+        </dcc:role>
+        <dcc:mail>j.kraemer@rhein-metrology.example</dcc:mail>
+      </dcc:respPerson>
+    </dcc:respPersons>
+    <dcc:customer>
+      <dcc:name>
+        <dcc:content lang="en">Nordwerk Energie AG</dcc:content>
+      </dcc:name>
+      <dcc:address>
+        <dcc:street>Ufer promenade 3</dcc:street>
+        <dcc:zipCode>20095</dcc:zipCode>
+        <dcc:city>Hamburg</dcc:city>
+        <dcc:countryCode>DE</dcc:countryCode>
+      </dcc:address>
+      <dcc:id></dcc:id>
+    </dcc:customer>
+  </dcc:administrativeData>
+  <dcc:measurementResults>
+    <dcc:usedMethods>
+      <dcc:usedMethod id="METHOD-DC">
+        <dcc:name>
+          <dcc:content lang="en">Direct comparison with a DC voltage reference standard</dcc:content>
+        </dcc:name>
+      </dcc:usedMethod>
+    </dcc:usedMethods>
+    <dcc:influenceConditions>
+      <dcc:influencingQuantity>
+        <dcc:name>
+          <dcc:content lang="en">Ambient temperature</dcc:content>
+        </dcc:name>
+        <dcc:data>
+          <dcc:quantity>
+            <dcc:SIQuantity SIUnit="Celsius">
+              <dcc:real>
+                <dcc:valueData>
+                  <dc:value>23.1</dc:value>
+                </dcc:valueData>
+              </dcc:real>
+            </dcc:SIQuantity>
+          </dcc:quantity>
+        </dcc:data>
+      </dcc:influencingQuantity>
+      <dcc:influencingQuantity>
+        <dcc:name>
+          <dcc:content lang="en">Relative humidity</dcc:content>
+        </dcc:name>
+        <dcc:data>
+          <dcc:quantity id="RH-COND">
+            <dcc:SIQuantity SIUnit="%RH">
+              <dcc:real>
+                <dcc:valueData>
+                  <dc:value>41.0</dc:value>
+                </dcc:valueData>
+              </dcc:real>
+            </dcc:SIQuantity>
+          </dcc:quantity>
+        </dcc:data>
+      </dcc:influencingQuantity>
+    </dcc:influenceConditions>
+    <dcc:results>
+      <dcc:result refMethodRef="METHOD-DC" refType="basic_flat">
+        <dcc:name>
+          <dcc:content lang="en">DC voltage error at nominal 10 V</dcc:content>
+        </dcc:name>
+        <dcc:data>
+          <dcc:measurementData id="MD-10V">
+            <dcc:quantity>
+              <dcc:SIQuantity SIUnit="V">
+                <dcc:real>
+                  <dcc:valueData>
+                    <dc:value>9.999</dc:value>
+                  </dcc:valueData>
+                </dcc:real>
+                <dcc:real>
+                  <dcc:valueData>
+                    <dc:value>0.000000</dc:value>
+                  </dcc:valueData>
+                </dcc:real>
+              </dcc:SIQuantity>
+            </dcc:quantity>
+          </dcc:measurementData>
+        </dcc:data>
+        <dcc:expUncertainties>
+          <dcc:expandedUnc>
+            <dcc:SIQuantity SIUnit="uV/V">
+              <dcc:coverageFactor id="K-FACTOR-10V">2</dcc:coverageFactor>
+              <dcc:coverageProbability id="CP-10V">0.9545</dcc:coverageProbability>
+              <dcc:valueData id="U-10V">
+                <dc:value>11.5</dc:value>
+              </dcc:valueData>
+            </dcc:SIQuantity>
+          </dcc:expandedUnc>
+        </dcc:expUncertainties>
+      </dcc:result>
+      <dcc:result refMethodRef="METHOD-DC" refType="basic_flat">
+        <dcc:name>
+          <dcc:content lang="en">DC voltage error at nominal 100 V</dcc:content>
+        </dcc:name>
+        <dcc:data>
+          <dcc:measurementData id="MD-100V">
+            <dcc:quantity>
+              <dcc:SIQuantity SIUnit="V">
+                <dcc:real>
+                  <dcc:valueData>
+                    <dc:value>99.972</dc:value>
+                  </dcc:valueData>
+                </dcc:real>
+                <dcc:real>
+                  <dcc:valueData>
+                    <dc:value>-0.000002</dc:value>
+                  </dcc:valueData>
+                </dcc:real>
+              </dcc:SIQuantity>
+            </dcc:quantity>
+          </dcc:measurementData>
+        </dcc:data>
+        <dcc:expUncertainties>
+          <dcc:expandedUnc>
+            <dcc:SIQuantity SIUnit="uV/V">
+              <dcc:coverageFactor>2</dcc:coverageFactor>
+              <dcc:coverageProbability>0.9545</dcc:coverageProbability>
+              <dcc:valueData>
+                <dc:value>12.8</dc:value>
+              </dcc:valueData>
+            </dcc:SIQuantity>
+          </dcc:expandedUnc>
+        </dcc:expUncertainties>
+      </dcc:result>
+      <dcc:result refMethodRef="METHOD-DC" refType="basic_flat">
+        <dcc:name>
+          <dcc:content lang="en">DC voltage error at nominal 1000 V</dcc:content>
+        </dcc:name>
+        <dcc:data>
+          <dcc:measurementData id="MD-1000V">
+            <dcc:quantity>
+              <dcc:SIQuantity SIUnit="V">
+                <dcc:real>
+                  <dcc:valueData>
+                    <dc:value>999.48</dc:value>
+                  </dcc:valueData>
+                </dcc:real>
+                <dcc:real>
+                  <dcc:valueData>
+                    <dc:value>-0.000001</dc:value>
+                  </dcc:valueData>
+                </dcc:real>
+              </dcc:SIQuantity>
+            </dcc:quantity>
+          </dcc:measurementData>
+        </dcc:data>
+        <dcc:expUncertainties>
+          <dcc:expandedUnc>
+            <dcc:SIQuantity SIUnit="uV/V">
+              <dcc:coverageFactor>2</dcc:coverageFactor>
+              <dcc:coverageProbability>0.9545</dcc:coverageProbability>
+              <dcc:valueData>
+                <dc:value>13.9</dc:value>
+              </dcc:valueData>
+            </dcc:SIQuantity>
+          </dcc:expandedUnc>
+        </dcc:expUncertainties>
+      </dcc:result>
+    </dcc:results>
+  </dcc:measurementResults>
+  <dcc:comment>
+    <dcc:name>
+      <dcc:content lang="en">Reference </dcc:content>
+    </dcc:name>
+    <dcc:content lang="en">Calibrated against reference standard RM-0151 (10 V DC Voltage Standard), traceable to PTB via accredited laboratory procedure RML-PROC-DC-05. Ambient 23.1 °C, 41.0 %RH. Instrument range setting 1000 V.</dcc:content>
+  </dcc:comment>
+  <ds:Signature Id="issuer-1"/>
+</dcc:digitalCalibrationCertificate>

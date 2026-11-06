@@ -1,0 +1,349 @@
+[
+  {
+    "type": "constructor",
+    "stateMutability": "nonpayable",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "name": "DEFAULT_ADMIN_ROLE",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes32" }]
+  },
+  {
+    "type": "function",
+    "name": "LAB_ADMIN_ROLE",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes32" }]
+  },
+  {
+    "type": "function",
+    "name": "CALIBRATION_ISSUER_ROLE",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes32" }]
+  },
+  {
+    "type": "function",
+    "name": "INSTRUMENT_OWNER_ROLE",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes32" }]
+  },
+  {
+    "type": "function",
+    "name": "getRoleAdmin",
+    "stateMutability": "view",
+    "inputs": [{ "name": "role", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "bytes32" }]
+  },
+  {
+    "type": "function",
+    "name": "grantRole",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "role", "type": "bytes32" }, { "name": "account", "type": "address" }]
+  },
+  {
+    "type": "function",
+    "name": "hasRole",
+    "stateMutability": "view",
+    "inputs": [{ "name": "role", "type": "bytes32" }, { "name": "account", "type": "address" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "registerLaboratory",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "laboratoryId", "type": "bytes32" },
+      { "name": "profileHash", "type": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "approveLaboratory",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "laboratoryId", "type": "bytes32" }],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "setIssuerScope",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "issuer", "type": "address" },
+      { "name": "scopeHash", "type": "bytes32" },
+      { "name": "active", "type": "bool" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "revokeIssuer",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "issuer", "type": "address" }],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "isIssuerAuthorised",
+    "stateMutability": "view",
+    "inputs": [{ "name": "issuer", "type": "address" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "registerInstrument",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "instrumentId", "type": "bytes32" },
+      { "name": "instrumentType", "type": "bytes32" },
+      { "name": "specificationHash", "type": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "transferInstrumentOwnership",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "instrumentId", "type": "bytes32" },
+      { "name": "newOwner", "type": "address" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "getInstrument",
+    "stateMutability": "view",
+    "inputs": [{ "name": "instrumentId", "type": "bytes32" }],
+    "outputs": [
+      { "name": "instrumentId", "type": "bytes32" },
+      { "name": "owner", "type": "address" },
+      { "name": "instrumentType", "type": "bytes32" },
+      { "name": "specificationHash", "type": "bytes32" },
+      { "name": "createdAt", "type": "uint64" },
+      { "name": "active", "type": "bool" }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "issueCalibration",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "certificateId", "type": "bytes32" },
+      { "name": "instrumentId", "type": "bytes32" },
+      { "name": "certificateDigest", "type": "bytes32" },
+      { "name": "measurementScopeHash", "type": "bytes32" },
+      { "name": "referenceStandardHash", "type": "bytes32" },
+      { "name": "issueDate", "type": "uint64" },
+      { "name": "validUntil", "type": "uint64" },
+      { "name": "revision", "type": "uint32" },
+      { "name": "supersedesId", "type": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "supersedeCalibration",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "previousCertificateId", "type": "bytes32" },
+      { "name": "newCertificateId", "type": "bytes32" },
+      { "name": "instrumentId", "type": "bytes32" },
+      { "name": "certificateDigest", "type": "bytes32" },
+      { "name": "measurementScopeHash", "type": "bytes32" },
+      { "name": "referenceStandardHash", "type": "bytes32" },
+      { "name": "issueDate", "type": "uint64" },
+      { "name": "validUntil", "type": "uint64" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "revokeCalibration",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "certificateId", "type": "bytes32" },
+      { "name": "reason", "type": "string" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "getCertificate",
+    "stateMutability": "view",
+    "inputs": [{ "name": "certificateId", "type": "bytes32" }],
+    "outputs": [
+      { "name": "certificateId", "type": "bytes32" },
+      { "name": "instrumentId", "type": "bytes32" },
+      { "name": "issuer", "type": "address" },
+      { "name": "certificateDigest", "type": "bytes32" },
+      { "name": "measurementScopeHash", "type": "bytes32" },
+      { "name": "referenceStandardHash", "type": "bytes32" },
+      { "name": "issueDate", "type": "uint64" },
+      { "name": "validUntil", "type": "uint64" },
+      { "name": "revision", "type": "uint32" },
+      { "name": "supersedesId", "type": "bytes32" },
+      { "name": "status", "type": "uint8" }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getCertificateStatus",
+    "stateMutability": "view",
+    "inputs": [{ "name": "certificateId", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "uint8" }]
+  },
+  {
+    "type": "function",
+    "name": "isCalibrationCurrent",
+    "stateMutability": "view",
+    "inputs": [{ "name": "certificateId", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "anchoredDigests",
+    "stateMutability": "view",
+    "inputs": [{ "name": "certificateDigest", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "currentCertificate",
+    "stateMutability": "view",
+    "inputs": [{ "name": "instrumentId", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "bytes32" }]
+  },
+  {
+    "type": "event",
+    "name": "LaboratoryRegistered",
+    "inputs": [
+      { "name": "laboratoryId", "type": "bytes32", "indexed": true },
+      { "name": "administrator", "type": "address", "indexed": true },
+      { "name": "profileHash", "type": "bytes32", "indexed": false }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "IssuerScopeUpdated",
+    "inputs": [
+      { "name": "issuer", "type": "address", "indexed": true },
+      { "name": "scopeHash", "type": "bytes32", "indexed": true },
+      { "name": "active", "type": "bool", "indexed": false }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "InstrumentRegistered",
+    "inputs": [
+      { "name": "instrumentId", "type": "bytes32", "indexed": true },
+      { "name": "owner", "type": "address", "indexed": true },
+      { "name": "instrumentType", "type": "bytes32", "indexed": false }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "InstrumentOwnershipChanged",
+    "inputs": [
+      { "name": "instrumentId", "type": "bytes32", "indexed": true },
+      { "name": "previousOwner", "type": "address", "indexed": true },
+      { "name": "newOwner", "type": "address", "indexed": true }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CalibrationIssued",
+    "inputs": [
+      { "name": "certificateId", "type": "bytes32", "indexed": true },
+      { "name": "instrumentId", "type": "bytes32", "indexed": true },
+      { "name": "issuer", "type": "address", "indexed": true },
+      { "name": "certificateDigest", "type": "bytes32", "indexed": false },
+      { "name": "validUntil", "type": "uint64", "indexed": false },
+      { "name": "revision", "type": "uint32", "indexed": false }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CalibrationSuperseded",
+    "inputs": [
+      { "name": "previousCertificateId", "type": "bytes32", "indexed": true },
+      { "name": "newCertificateId", "type": "bytes32", "indexed": true },
+      { "name": "newRevision", "type": "uint32", "indexed": false }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CalibrationRevoked",
+    "inputs": [
+      { "name": "certificateId", "type": "bytes32", "indexed": true },
+      { "name": "revoker", "type": "address", "indexed": true },
+      { "name": "reason", "type": "string", "indexed": false }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "NotApprovedLaboratory",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotAuthorizedIssuer",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "IssuerScopeInactive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InstrumentUnknownOrInactive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotInstrumentOwner",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CertificateUnknown",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CertificateNotCurrent",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "DuplicateDigest",
+    "inputs": [{ "name": "certificateDigest", "type": "bytes32" }]
+  },
+  {
+    "type": "error",
+    "name": "InvalidValidityWindow",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "KeyConflict",
+    "inputs": [
+      { "name": "id", "type": "bytes32" },
+      { "name": "expectedCurrent", "type": "bytes32" },
+      { "name": "providedPrev", "type": "bytes32" }
+    ]
+  }
+]

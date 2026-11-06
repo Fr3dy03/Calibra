@@ -1,0 +1,47 @@
+# Development graph for CalibraGraph (apps/web + apps/api + contracts)
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: calibragraph
+      POSTGRES_PASSWORD: calibragraph
+      POSTGRES_DB: calibragraph
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: calibragraph
+      MINIO_ROOT_PASSWORD: calibragraph-dev
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [miniodata:/data]
+
+  api:
+    build: { context: ./apps/api }
+    environment:
+      DATABASE_URL: postgresql://calibragraph:calibragraph@postgres:5432/calibragraph
+      REDIS_URL: redis://redis:6379
+      S3_ENDPOINT: http://minio:9000
+      JWT_SECRET: change-me
+      CHAIN_ID: "968"
+      BOT_TESTNET_RPC_URL: https://rpc.bohr.life
+      REGISTRY_ADDRESS: ""
+    ports: ["4000:4000"]
+    depends_on: [postgres, redis, minio]
+
+  web:
+    build: { context: ./apps/web }
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  miniodata:

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.next/
+out/
+cache/
+coverage/
+.env
+.env.local
+*.tsbuildinfo
+foundry_cache/
+broadcast/
+deployments/latest.json
+hypothesis/
+.pytest_cache/
+__pycache__/

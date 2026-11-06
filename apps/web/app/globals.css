@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #fafcfd;
+  --color-surface: #ffffff;
+  --color-text: #263643;
+  --color-muted: #647584;
+  --color-cobalt: #285dad;
+  --color-teal: #168a91;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg text-text font-sans antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #edf3fc;
+  color: #263643;
+}
+
+/* Layout primitives -------------------------------------------------- */
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-copy {
+    @apply mx-auto w-full max-w-copy px-4 sm:px-6;
+  }
+
+  /* Numeric cells: right-aligned, tabular figures, monospace values live
+     adjacent (font-mono applied per-cell) */
+  .numeric {
+    @apply text-right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mono {
+    @apply font-mono;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Form fields */
+  .field-input {
+    @apply w-full rounded border border-border bg-surface px-3 py-2 text-sm text-text placeholder:text-muted/60 focus:border-cobalt focus:outline-none focus:ring-2 focus:ring-cobalt/25;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted;
+  }
+
+  /* Document-like panel used for the certificate preview / certificate detail */
+  .certificate-sheet {
+    @apply rounded border border-border bg-surface shadow-card;
+    background-image: linear-gradient(
+      to bottom,
+      #ffffff 0%,
+      #ffffff 100%
+    );
+  }
+}
+
+/* Thin scrollbars inside table wrappers on desktop */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Details/summary accordion (FAQ) */
+summary.faq-summary {
+  @apply cursor-pointer list-none marker:hidden;
+}
+summary.faq-summary::-webkit-details-marker {
+  display: none;
+}

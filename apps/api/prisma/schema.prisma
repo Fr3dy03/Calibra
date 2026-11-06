@@ -1,0 +1,378 @@
+// CalibraGraph — Prisma schema
+// Rule: measurement decimals are ALWAYS strings (exact representation).
+// Floats are forbidden for metrological values. see docs/ARCHITECTURE.md §3
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------- identity
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  fullName      String
+  role          Role     @default(INSTRUMENT_OWNER)
+  organisationId String? 
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organisation     Organisation?      @relation(fields: [organisationId], references: [id])
+  issuedCertificates CalibrationCertificate[] @relation("Issuer")
+  auditLogs        AuditLog[]
+  notifications    Notification[]
+}
+
+enum Role {
+  LAB_ADMIN
+  CALIBRATION_ISSUER
+  INSTRUMENT_OWNER
+  VIEWER
+}
+
+model Organisation {
+  id        String   @id @default(uuid())
+  name      String
+  kind      String   // "laboratory" | "instrument_owner" | "manufacturer" | "utility"
+  createdAt DateTime @default(now())
+
+  members   OrganisationMember[]
+  users     User[]
+  instruments      Instrument[]
+  certificates     CalibrationCertificate[]
+  notificationPolicies NotificationPolicy[]
+
+  @@map("organisations")
+}
+
+model OrganisationMember {
+  id             String   @id @default(uuid())
+  organisationId String
+  userId         String
+  orgRole        String   // "owner" | "admin" | "member" | "approver" | "signer" | "technician"
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+
+  @@unique([organisationId, userId])
+}
+
+// ---------------------------------------------------------------- laboratories
+
+model Laboratory {
+  id          String   @id @default(uuid())
+  registryId  String?  @unique // bytes32 id on-chain (hex)
+  name        String
+  country     String?
+  profileHash String?  // off-chain laboratory profile digest
+  approved    Boolean  @default(false) // registry admin approval flag
+  walletAddress String? @unique
+  website     String?
+  createdAt   DateTime @default(now())
+
+  accreditationReferences AccreditationReference[]
+  scopes       LaboratoryScope[]
+  signers      LaboratorySigner[]
+  certificates CalibrationCertificate[]
+  instruments  Instrument[]
+}
+
+/// ILAC-MRA style accreditation EVIDENCE. Never treated as self-evident truth.
+model AccreditationReference {
+  id             String   @id @default(uuid())
+  laboratoryId   String
+  reference      String   // e.g. "D-PL-11141-01-00"
+  body           String   // accreditation body, e.g. "DAkkS (simulated)"
+  standard       String   @default("ISO/IEC 17025:2017")
+  validFrom      DateTime
+  validUntil     DateTime
+  evidenceDigest String   // sha-256 of uploaded certificate of accreditation
+  createdAt      DateTime @default(now())
+
+  laboratory Laboratory @relation(fields: [laboratoryId], references: [id])
+}
+
+model LaboratoryScope {
+  id            String   @id @default(uuid())
+  laboratoryId  String
+  quantity      String   // e.g. "DC/LF voltage"
+  rangeFrom     String   // exact decimal as string
+  rangeTo       String
+  unit          String   // si-unit style identifier
+  cmc           String?  // best measurement capability, exact decimal as string
+  cmcUnit       String?
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  laboratory Laboratory @relation(fields: [laboratoryId], references: [id])
+}
+
+model LaboratorySigner {
+  id             String   @id @default(uuid())
+  laboratoryId   String
+  fullName       String
+  role           String   // "technical manager" | "authorised signatory" | "metrologist"
+  walletAddress  String?  @unique
+  active         Boolean  @default(true)
+
+  laboratory Laboratory @relation(fields: [laboratoryId], references: [id])
+}
+
+// ---------------------------------------------------------------- instruments
+
+model Instrument {
+  id            String   @id @default(uuid())
+  registryId    String?  @unique // bytes32 on-chain instrumentId (hex)
+  organisationId String
+  laboratoryId  String?  // servicing laboratory (where stored)
+  category      String   // e.g. "digital multimeter"
+  manufacturer  String
+  model         String
+  serialPlain   String   @unique // owner-internal full serial
+  serialMasked  String   // public, e.g. "2451***21"
+  measurementFunction String
+  rangeFrom     String
+  rangeTo       String
+  unit          String
+  resolution    String
+  location      String?
+  assetReference String?
+  ownerUserId   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organisation     Organisation @relation(fields: [organisationId], references: [id])
+  laboratory       Laboratory?  @relation(fields: [laboratoryId], references: [id])
+  ownerHistory     OwnerHistoryEntry[]
+  specifications   InstrumentSpecification[]
+  certificates     CalibrationCertificate[]
+  events           CalibrationEvent[]
+}
+
+model InstrumentSpecification {
+  id           String   @id @default(uuid())
+  instrumentId String
+  filed        String   // JSON payload frozen at version
+  version      Int      @default(1)
+  createdAt    DateTime @default(now())
+
+  instrument Instrument @relation(fields: [instrumentId], references: [id])
+}
+
+model OwnerHistoryEntry {
+  id            String   @id @default(uuid())
+  instrumentId  String
+  previousOwner String?
+  newOwner      String
+  changedAt     DateTime @default(now())
+  source        String   @default("platform") // platform | blockchain
+
+  instrument Instrument @relation(fields: [instrumentId], references: [id])
+}
+
+// ---------------------------------------------------------------- certificates
+
+enum CertificateStatus {
+  IMPORTED
+  PENDING_VALIDATION
+  VALID_SCHEMA
+  PENDING_ISSUER_APPROVAL
+  ISSUED
+  CURRENT
+  SUPERSEDED
+  REVOKED
+  EXPIRED
+}
+
+model CalibrationCertificate {
+  id                   String   @id @default(uuid())
+  certificateUid       String   @unique // DCC uniqID, e.g. "DCC-RML-2026-0417"
+  registryId           String?  @unique // bytes32 on-chain certificateId
+  instrumentId         String
+  laboratoryId         String
+  issuerId             String?  // user who issued (Issuer relation)
+  status               CertificateStatus @default(IMPORTED)
+  revision             Int      @default(1)
+  supersedesId         String?  // previous certificate (pointer, kept immutable)
+  supersededById       String?
+  digest               String?  // keccak256(sha256(raw xml bytes))
+  measurementScopeHash String?
+  referenceStandardHash String?
+  calibrationDate      DateTime?
+  validUntil           DateTime?
+  calibrationMethod    String?
+  conditionsNote       String?
+  comments             String?
+  schemaVersion        String?  // e.g. "3.3.0"
+  signaturePresent     Boolean  @default(false)
+  revocationReason     String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  issuedAt             DateTime?
+  anchoredAt           DateTime?
+  anchoredTxHash       String?
+
+  instrument  Instrument @relation(fields: [instrumentId], references: [id])
+  laboratory  Laboratory @relation(fields: [laboratoryId], references: [id])
+  issuer      User?      @relation("Issuer", fields: [issuerId], references: [id])
+  measurements CalibrationMeasurement[]
+  uncertainties MeasurementUncertainty[]
+  standards   ReferenceStandard[] @relation("CertifiedWith")
+  supersedes  CalibrationCertificate? @relation("Supersedes", fields: [supersedesId], references: [id])
+  supersededBy CalibrationCertificate[] @relation("Supersedes")
+  revisions   CertificateRevision[]
+  documents   EvidenceDocument[]
+  events      CalibrationEvent[]
+
+  @@index([instrumentId, status])
+}
+
+model CalibrationMeasurement {
+  id            String  @id @default(uuid())
+  certificateId String
+  resultIndex   Int
+  quantityName  String  // e.g. "DC voltage error"
+  refMethodRef  String? // DCC refId of used method
+
+  // exact representation — never float
+  valueDecimal  String
+  unit          String  // si-unit, e.g. "V"
+  errorDecimal  String?
+  errorUnit     String?
+
+  measuredAt    String? // if time present in DCC
+  certificate   CalibrationCertificate @relation(fields: [certificateId], references: [id])
+
+  @@unique([certificateId, resultIndex])
+}
+
+model MeasurementUncertainty {
+  id                    String  @id @default(uuid())
+  measurementId         String  @unique
+  expandedDecimal       String  // U, exact decimal as string
+  unit                  String
+  coverageFactor        String? // k, string to avoid float drift
+  coverageProbability   String? // e.g. "0.95"
+  distribution          String?
+
+  measurement CalibrationMeasurement @relation(fields: [measurementId], references: [id])
+}
+
+model ReferenceStandard {
+  id             String  @id @default(uuid())
+  standardUid    String  @unique
+  designation    String  // e.g. "10 V DC Voltage Standard"
+  kind           String  // e.g. "DC voltage standard"
+  rangeFrom      String?
+  rangeTo        String?
+  unit           String
+  traceableTo    String? // national/nmi reference, e.g. "PTB via D-PL-11141-01"
+  lastCalibrationDate DateTime?
+  certificate    CalibrationCertificate? @relation("CertifiedWith")
+  issuerLaboratory String?
+  chainDigest    String?
+}
+
+model CertificateRevision {
+  id             String   @id @default(uuid())
+  certificateId  String
+  revision       Int
+  changedBy      String?  // user id
+  metadataDiff   String   // JSON diff of permitted metadata corrections
+  digest         String   // document digest after revision
+  approvalNote   String?
+  createdAt      DateTime @default(now())
+
+  certificate CalibrationCertificate @relation(fields: [certificateId], references: [id])
+}
+
+model CalibrationEvent {
+  id            String   @id @default(uuid())
+  instrumentId  String
+  certificateId String?
+  kind          String   // "registered" | "calibrated" | "recalibration" | "ownership" | "revocation" | "supersession"
+  occurredAt    DateTime @default(now())
+  payload       String?  // JSON
+
+  instrument  Instrument @relation(fields: [instrumentId], references: [id])
+  certificate CalibrationCertificate? @relation(fields: [certificateId], references: [id])
+}
+
+// ---------------------------------------------------------------- evidence
+
+model EvidenceDocument {
+  id            String   @id @default(uuid())
+  certificateId String?
+  kind          String   // "dcc_raw_xml" | "pdf" | "photo" | "accreditation"
+  storageKey    String   // object storage key (encrypted bucket)
+  sha256        String   // sha-256 hex of exact bytes
+  keccak256     String?  // keccak256 for on-chain anchoring
+  byteSize      Int
+  createdAt     DateTime @default(now())
+
+  certificate CalibrationCertificate? @relation(fields: [certificateId], references: [id])
+}
+
+model VerificationRequest {
+  id            String   @id @default(uuid())
+  certificateId String
+  ip            String?
+  verdict       String   // "match" | "mismatch" | "unknown"
+  checkedAt     DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  channel   String   @default("email")
+  subject   String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model NotificationPolicy {
+  id             String   @id @default(uuid())
+  organisationId String
+  lapseDays      Int      // e.g. 30, 14, 7
+  channel        String   @default("email")
+  active         Boolean  @default(true)
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+}
+
+// ---------------------------------------------------------------- chain + audit
+
+model BlockchainTransaction {
+  id             String   @id @default(uuid())
+  txHash         String   @unique
+  chainId        Int
+  blockNumber    BigInt
+  blockHash      String
+  eventKind      String   // "CalibrationIssued" | "CalibrationSuperseded" | ...
+  certificateId  String?
+  payload        String   // JSON of decoded event args
+  confirmedAt    DateTime?
+  createdAt      DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  action     String   // e.g. "certificate.issue"
+  entityType String
+  entityId   String
+  detail     String?  // JSON
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([entityType, entityId])
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dcc:digitalCalibrationCertificate xmlns:dcc="https://ptb.de/dcc" schemaVersion="3.3.0" uniqueIdentifier="CG-DCC-2026-BROKEN">
+  <dcc:administrativeData>
+    <dcc:dccSoftware>
+      <dcc:software>
+        <dcc:name><dcc:content lang="en">DCC-Tool</dcc:content></dcc:name>
+        <dcc:release>3.1.5</dcc:release>
+    <dcc:measurementResults/>
+  </dcc:administrativeData>

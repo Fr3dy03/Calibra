@@ -1,0 +1,22 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.24"
+optimizer = true
+optimizer_runs = 1000000
+
+# Solidity version metadata
+bytecode_hash = "none"
+cbor_metadata = false
+
+# Emit ABI + IR for integration
+extra_output_files = ["abi"]
+
+[rpc_endpoints]
+bot_testnet = "${BOT_TESTNET_RPC_URL}"
+bot_mainnet = "${BOT_MAINNET_RPC_URL}"
+
+[etherscan]
+bot_testnet = { key = "${BOTSCAN_API_KEY}", url = "https://scan.bohr.life/api" }
+bot_mainnet = { key = "${BOTSCAN_API_KEY}", url = "https://scan.botchain.ai/api" }

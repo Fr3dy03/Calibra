@@ -1,0 +1,21 @@
+{
+  "name": "calibragraph",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calibration certificate and instrument traceability platform built on BOT Chain",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "contracts"
+  ],
+  "scripts": {
+    "setup:api": "cd apps/api && npm install && npm run db:generate",
+    "setup:web": "cd apps/web && npm install",
+    "dev:api": "cd apps/api && npm run start:dev",
+    "dev:web": "cd apps/web && npm run dev",
+    "test:api": "cd apps/api && npm test",
+    "test:contract": "cd contracts && forge test -vvv",
+    "build:contract": "cd contracts && forge build"
+  },
+  "license": "MIT"
+}
