@@ -56,7 +56,7 @@ export class DccPreviewService {
     return { schemaVersion, supported, validation, extraction, findings: parseFindings };
   }
 
-  async ingest(xml: string, actorId?: string): Promise<IngestOutcome> {
+  async ingest(xml: string, actorId?: string, links?: { instrumentId?: string; laboratoryId?: string }): Promise<IngestOutcome> {
     // [1] byte custody
     const bytes = Buffer.from(xml, 'utf8');
     const sha256Hex = this.storage.sha256(bytes);
@@ -93,8 +93,21 @@ export class DccPreviewService {
       });
     }
 
+    // CalibrationCertificates reference the serviced instrument and issuing laboratory in the
+    // database; the caller (import wizard) passes them together with the DCC XML.
+    const instrumentId = links?.instrumentId;
+    const laboratoryId = links?.laboratoryId;
+    if (!instrumentId || !laboratoryId) {
+      throw new ConflictException({
+        code: 'CERTIFICATE_LINKS_MISSING',
+        message: 'instrumentId and laboratoryId are required to import a certificate',
+      });
+    }
+
     const cert = await this.prisma.calibrationCertificate.create({
       data: {
+        instrumentId,
+        laboratoryId,
         certificateUid,
         status,
         schemaVersion: schemaVersion || null,

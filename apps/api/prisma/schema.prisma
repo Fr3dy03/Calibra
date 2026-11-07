@@ -45,7 +45,6 @@ model Organisation {
   members   OrganisationMember[]
   users     User[]
   instruments      Instrument[]
-  certificates     CalibrationCertificate[]
   notificationPolicies NotificationPolicy[]
 
   @@map("organisations")
@@ -221,7 +220,6 @@ model CalibrationCertificate {
   laboratory  Laboratory @relation(fields: [laboratoryId], references: [id])
   issuer      User?      @relation("Issuer", fields: [issuerId], references: [id])
   measurements CalibrationMeasurement[]
-  uncertainties MeasurementUncertainty[]
   standards   ReferenceStandard[] @relation("CertifiedWith")
   supersedes  CalibrationCertificate? @relation("Supersedes", fields: [supersedesId], references: [id])
   supersededBy CalibrationCertificate[] @relation("Supersedes")
@@ -247,6 +245,7 @@ model CalibrationMeasurement {
 
   measuredAt    String? // if time present in DCC
   certificate   CalibrationCertificate @relation(fields: [certificateId], references: [id])
+  uncertainty   MeasurementUncertainty?
 
   @@unique([certificateId, resultIndex])
 }
@@ -273,7 +272,8 @@ model ReferenceStandard {
   unit           String
   traceableTo    String? // national/nmi reference, e.g. "PTB via D-PL-11141-01"
   lastCalibrationDate DateTime?
-  certificate    CalibrationCertificate? @relation("CertifiedWith")
+  certificate    CalibrationCertificate? @relation("CertifiedWith", fields: [certificateId], references: [id])
+  certificateId  String?
   issuerLaboratory String?
   chainDigest    String?
 }

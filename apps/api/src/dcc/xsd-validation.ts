@@ -65,7 +65,10 @@ export function validateAgainstXsd(xml: string, schemaVersion: string): XsdValid
     };
   }
 
-  const res = spawnSync('xmllint', ['--noout', '--nonet', '--schema', xsd, '-'], { input: xml, encoding: 'utf8' });
+  // Sidecar binary: default on PATH, or configurable for Windows hosts
+  // (XSD_XMLLINT_PATH with the libxml2 build directory next to it for DLLs).
+  const xmlLint = process.env.XSD_XMLLINT_PATH ?? 'xmllint';
+  const res = spawnSync(xmlLint, ['--noout', '--nonet', '--schema', xsd, '-'], { input: xml, encoding: 'utf8' });
   const out = `${res.stderr ?? ''}${res.stdout ?? ''}`;
 
   if (res.status === 0) return { valid: true, schemaVersion, validator: `xmllint/libxml2 (dcc.xsd v${schemaVersion})`, findings };

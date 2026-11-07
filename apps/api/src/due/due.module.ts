@@ -1,4 +1,4 @@
-import { Controller, Get, Module, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Module, Post, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DueService } from './due.service';
 import { PrismaService } from '../common/prisma.service';
@@ -29,6 +29,6 @@ export class DueController {
 
 @Module({
   controllers: [DueController],
-  providers: [DueService, PrismaService],
+  providers: [DueService],
 })
 export class DueModule {}

@@ -61,6 +61,9 @@ export class InstrumentsService {
   }) {
     if (actor.role === 'VIEWER') throw new ForbiddenException('viewers cannot register instruments');
 
+    const organisationId = dto.organisationId ?? actor.organisationId;
+    if (!organisationId) throw new BadRequestException('organisationId is required (or resolve the actor to an organisation)');
+
     const instrumentId = stableId('calibragraph:instrument', `${dto.manufacturer}:${dto.model}:${dto.serialReference}`);
     const specHash = keccak256(toHex(JSON.stringify([dto.measurementFunction, dto.rangeFrom, dto.rangeTo, dto.unit, dto.resolution])));
 
@@ -81,7 +84,7 @@ export class InstrumentsService {
         resolution: dto.resolution,
         location: dto.location,
         assetReference: dto.assetReference,
-        organisationId: dto.organisationId ?? actor.organisationId,
+        organisationId,
         ownerUserId: actor.sub,
         specifications: { create: { filed: JSON.stringify(dto), version: 1 } },
         ownerHistory: { create: { newOwner: actor.email, source: receipt ? 'blockchain' : 'platform' } },

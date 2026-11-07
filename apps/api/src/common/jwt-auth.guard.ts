@@ -41,8 +41,8 @@ export const ReflectorPublic = {
 };
 
 export const Public = (): MethodDecorator & ClassDecorator => {
-  return (target: object, key?: string | symbol, descriptor?) => {
-    if (descriptor) Reflect.defineMetadata(IS_PUBLIC_KEY, true, descriptor.value);
+  return (target: object, key?: string | symbol, descriptor?: TypedPropertyDescriptor<any>) => {
+    if (descriptor?.value) Reflect.defineMetadata(IS_PUBLIC_KEY, true, descriptor.value);
     else Reflect.defineMetadata(IS_PUBLIC_KEY, true, target);
     return target as never;
   };

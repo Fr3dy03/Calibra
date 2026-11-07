@@ -39,7 +39,7 @@ export class VerificationService {
       where: { OR: [{ id: certificateRef }, { certificateUid: certificateRef }, { registryId: certificateRef }] },
       include: {
         instrument: true,
-        laboratory: true,
+        laboratory: { include: { scopes: true } },
         issuer: true,
         measurements: { include: { uncertainty: true } },
         documents: { where: { kind: 'dcc_raw_xml' } },

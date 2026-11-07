@@ -44,5 +44,5 @@ export class ReportsController {
   }
 }
 
-@Module({ controllers: [ReportsController], providers: [PrismaService] })
+@Module({ controllers: [ReportsController] })
 export class ReportsModule {}

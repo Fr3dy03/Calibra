@@ -60,7 +60,11 @@ export class DueService {
   }
 }
 
-function toRow(c: NonNullable<unknown>) {
+function toRow(c: {
+  instrument: { id: string; manufacturer: string; model: string; serialMasked: string; organisation?: { name: string } | null };
+  certificateUid: string;
+  validUntil: Date | null;
+}) {
   return {
     instrumentId: c.instrument.id,
     instrument: `${c.instrument.manufacturer} ${c.instrument.model} (${c.instrument.serialMasked})`,

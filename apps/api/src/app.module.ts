@@ -2,10 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 
-import { PrismaService } from './common/prisma.service';
-import { AuditService } from './common/audit.service';
-import { StorageService } from './common/storage.service';
-import { JobsService } from './common/jobs.service';
+import { CommonModule } from './common/common.module';
 import { JwtAuthGuard } from './common/jwt-auth.guard';
 
 import { AuthModule } from './auth/auth.module';
@@ -22,6 +19,7 @@ import { ReportsModule } from './reports/reports.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: [process.env.NODE_ENV === 'test' ? '.env.test' : '.env'] }),
+    CommonModule,
     AuthModule,
     InstrumentsModule,
     LaboratoriesModule,
@@ -33,7 +31,6 @@ import { ReportsModule } from './reports/reports.module';
     BlockchainModule,
     ReportsModule,
   ],
-  providers: [PrismaService, AuditService, StorageService, JobsService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
-  exports: [PrismaService, AuditService],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

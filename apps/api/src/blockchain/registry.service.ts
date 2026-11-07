@@ -6,7 +6,8 @@
  * Only digests and identifiers are submitted; no raw measurements.
  */
 import { Injectable, Logger } from '@nestjs/common';
-import { createPublicClient, createWalletClient, http, webSocket, toHex, defineChain, type Hex, type WalletClient } from 'viem';
+import { createPublicClient, createWalletClient, http, webSocket, toHex, keccak256, defineChain, type Hex, type WalletClient } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 const ABI = [
   /* minimal ABI both directions: mirrored from contracts/out/CalibrationRegistry.sol/CalibrationRegistry.json */
@@ -58,7 +59,9 @@ export class RegistryService {
     const key = process.env.REGISTRY_DEPLOYER_KEY;
     const chain = Number(process.env.CHAIN_ID ?? 968) === 677 ? BOT_CHAINS.botMainnet : BOT_CHAINS.botTestnet;
     if (key) {
-      this.wallet = createWalletClient({ chain, transport: http(chain.rpcUrls.default.http[0]), account: key as Hex });
+      const account = privateKeyToAccount((key.startsWith('0x') ? key : `0x${key}`) as Hex);
+      this.wallet = createWalletClient({ chain, transport: http(chain.rpcUrls.default.http[0]), account });
+      this.logger.log(`registry wallet ${account.address} configured (writes will anchor digests on-chain)`);
     } else {
       this.logger.warn('REGISTRY_DEPLOYER_KEY unset — registry calls will be simulated (test/demo safety)');
     }
@@ -68,9 +71,17 @@ export class RegistryService {
   private registryAddress() { return process.env.REGISTRY_ADDRESS as Hex; }
 
   /** Writes are no-op'd when no wallet is configured (development without keys). */
-  private async write(fn: { address: Hex; abi: typeof ABI; functionName: string; args: unknown[] }, fallback: () => Promise<{ txHash: string }>) {
+  private async write(fn: { address?: Hex; abi?: unknown; functionName: string; args: readonly unknown[] }, fallback: () => Promise<{ txHash: string }>) {
     if (!this.wallet || !this.registryAddress()) return fallback();
-    const hash = await this.wallet.writeContract({ ...(fn as never), account: this.wallet.account!, address: this.registryAddress() });
+    const chain = Number(process.env.CHAIN_ID ?? 968) === 677 ? BOT_CHAINS.botMainnet : BOT_CHAINS.botTestnet;
+    const hash = await this.wallet.writeContract({
+      account: this.wallet.account!,
+      address: fn.address ?? this.registryAddress(),
+      chain,
+      abi: ABI,
+      functionName: fn.functionName as never,
+      args: fn.args as never,
+    });
     const receipt = await this.publicClient().waitForTransactionReceipt({ hash });
     this.logger.log(`registry tx ${hash} confirmed at block ${receipt.blockNumber}`);
     return { txHash: hash, blockNumber: receipt.blockNumber };
@@ -79,7 +90,7 @@ export class RegistryService {
   getCertificate(certificateId: string): Promise<string | null> {
     return this.publicClient().readContract({ address: this.registryAddress(), abi: ABI, functionName: 'getCertificateStatus', args: [toHexStr(certificateId)] })
       .then(() => this.publicClient().readContract({ address: this.registryAddress(), abi: ABI, functionName: 'certificates', args: [toHexStr(certificateId)] }))
-      .then((c: never) => (c as unknown[])[3] as string)
+      .then((c) => (c as unknown as unknown[])[3] as string)
       .catch(() => null);
   }
 
@@ -131,7 +142,9 @@ export class RegistryService {
 }
 
 function toHexStr(value: string): Hex {
-  // deterministic bytes32 from a string id (ids in v1 are digests or dotted identifiers)
+  // bytes32 id: empty -> zero bytes32 (e.g. "no supersede"), well-formed 32-byte
+  // ids pass through; any other string id is keccak256'd deterministically.
+  if (value.length === 0) return `0x${'0'.repeat(64)}`;
   if (value.startsWith('0x') && value.length === 66) return value as Hex;
-  return (toHex(`calibragraph:${value}`).padEnd(66, '0')) as Hex;
+  return keccak256(toHex(`calibragraph:${value}`));
 }

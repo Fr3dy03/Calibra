@@ -31,5 +31,5 @@ export class LaboratoriesController {
   }
 }
 
-@Module({ controllers: [LaboratoriesController], providers: [PrismaService, AuditService] })
+@Module({ controllers: [LaboratoriesController] })
 export class LaboratoriesModule {}

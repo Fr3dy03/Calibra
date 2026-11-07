@@ -95,7 +95,7 @@ export function parseDcc(xml: string): DccExtraction {
 
   const results: ExtractedResult[] = [];
   for (const mr of measurementResultNodes) {
-    const mrName = localizedText(mr, 'dcc:name', 'name', lang);
+    const mrName = localizedText(mr, ['dcc:name', 'name'], lang);
     const resultsList = opt(mr, 'dcc:results', 'results');
     for (const r of arr(opt(resultsList, 'dcc:result', 'result'))) {
       results.push(...extractResult(r, mrName, lang));
@@ -152,15 +152,15 @@ function firstText(node: AnyNode | undefined, ...names: string[]): string | unde
 }
 
 /** dcc:textType → dcc:content(lang) list; picks preferred lang, then en, then first. */
-function localizedText(node: AnyNode | undefined, elementName: string, preferred?: string): string | undefined {
-  const holder = opt(node, elementName);
+function localizedText(node: AnyNode | undefined, elementName: string | string[], preferred?: string): string | undefined {
+  const holder = opt(node, ...(Array.isArray(elementName) ? elementName : [elementName]));
   if (!holder) return undefined;
   const contents = arr(holder['dcc:content'] ?? holder['content']);
   const parsed = contents.map((c) => ({
     lang: typeof c?.['@lang'] === 'string' ? (c['@lang'] as string) : undefined,
     text: typeof c === 'string' ? c : (typeof c?.['#text'] === 'string' ? (c['#text'] as string) : JSON.stringify(c)),
   }));
-  const chosen = (preferred && parsed.find((p) => p.lang === preferred))
+  const chosen = (preferred ? parsed.find((p) => p.lang === preferred) : undefined)
     ?? parsed.find((p) => p.lang === 'en')
     ?? parsed[0];
   return chosen?.text?.trim() || undefined;
@@ -188,7 +188,7 @@ function extractLaboratory(admin: AnyNode | undefined, lang?: string): DccExtrac
     name: localizedText(contact, 'dcc:name', lang),
     eMail: firstText(contact, 'dcc:eMail', 'eMail') ?? undefined,
     address: locationFlat(location),
-    cryptSignature: firstText(lab, 'dcc:cryptElectronicSignature', 'cryptElectronicSignature') ?? undefined,
+    cryptSignature: firstText(lab, 'dcc:cryptElectronicSignature', 'cryptElectronicSignature') !== undefined,
   };
 }
 

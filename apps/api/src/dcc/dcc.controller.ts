@@ -18,8 +18,8 @@ export class DccController {
   /** Full ingestion: digest, validate, parse, persist (idempotent-by-digest). */
   @Post('import')
   @HttpCode(201)
-  async import(@Body() dto: { xml: string }) {
-    return this.ingest.ingest(dto.xml);
+  async import(@Body() dto: { xml: string; instrumentId?: string; laboratoryId?: string }) {
+    return this.ingest.ingest(dto.xml, undefined, { instrumentId: dto.instrumentId, laboratoryId: dto.laboratoryId });
   }
 }
 
