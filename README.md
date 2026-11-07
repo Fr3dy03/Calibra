@@ -113,6 +113,21 @@ and writes the artifact to `contracts/deployments/latest.json`.
    Writes to the registry are no-ops until `REGISTRY_DEPLOYER_KEY` + `REGISTRY_ADDRESS` are set;
    without them the API logs a warning and simulates anchors (development mode).
 
+## Deploy the web app to Vercel
+
+`apps/web` (Next.js 14 marketing site + `/app` console) is fully self-contained — all page data
+comes from `apps/web/lib/data.ts`, so **no environment variables are required**. The NestJS API
+(`apps/api`) is not deployed to Vercel: it needs Postgres, Redis and object storage, so it runs on
+its own host (see *Quick start* above).
+
+1. Push this repository to GitHub.
+2. On [vercel.com](https://vercel.com) → **Add New… → Project** → import the repository.
+3. In the import screen, under **Root Directory** set **`apps/web`** (Vercel runs `next build` there;
+   the framework is auto-detected).
+4. Leave **Environment Variables** empty and click **Deploy**.
+
+A standalone `apps/web/package-lock.json` is committed, so the Vercel install is reproducible.
+
 ## The DCC pipeline (why we don't touch your numbers)
 
 1. bytes preserved → sha-256/keccak-256 digests
