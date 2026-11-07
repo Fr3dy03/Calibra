@@ -1,0 +1,21 @@
+{
+  "network": "BOT Chain Testnet",
+  "chainId": 968,
+  "rpc": "https://rpc.bohr.life",
+  "explorer": "https://scan.bohr.life/",
+  "contract": "CalibrationRegistry",
+  "registryAddress": "0x28d1f6e4093769446382ca5d76c121cedb105c0a",
+  "deployer": "0x793Af076d6Fe0A94Fb9436242dC6854Ef212B1F0",
+  "deployTxHash": "0xd2bb92edeb7f69604e0bc68b90ec0f79c286a8c3634757381cd6d8b2004ee037",
+  "deployBlock": 29565150,
+  "deployTs": 1794006210,
+  "deployGasUsed": 2169001,
+  "runtimeBytecodeSizeBytes": 9709,
+  "rolesGranted": {
+    "DEFAULT_ADMIN_ROLE": ["0x793Af076d6Fe0A94Fb9436242dC6854Ef212B1F0"],
+    "LAB_ADMIN_ROLE_tx": "0x3b4eacc65186a0ddee4000c6f625c04116fe3e74f1705dd3cfe3ffa2593c79d6",
+    "INSTRUMENT_OWNER_ROLE_tx": "0x86cef2fd889eedf08d1917c18aa3abc9845f750f2112fe0ce894f761e38b973f"
+  },
+  "deployedAt": "2026-11-07T00:55:20Z",
+  "note": "Deployer EOA holds DEFAULT_ADMIN, LAB_ADMIN and INSTRUMENT_OWNER roles for testnet operation. Mainnet (chain 677) remains gated behind docs/INTEGRATION_LIMITATIONS.md readiness."
+}

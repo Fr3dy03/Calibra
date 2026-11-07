@@ -68,6 +68,20 @@ forge script script/Deploy.s.sol --rpc-url https://rpc.bohr.life --broadcast --v
 
 Mainnet (chain 677) is gated behind the readiness checklist in `docs/INTEGRATION_LIMITATIONS.md`.
 
+### ✅ Live testnet deployment
+
+`CalibrationRegistry` is deployed on **BOT Chain Testnet (chain 968)**:
+
+| | |
+|---|---|
+| Registry address | `0x28d1f6e4093769446382ca5d76c121cedb105c0a` |
+| Deploy tx | `0xd2bb92edeb7f69604e0bc68b90ec0f79c286a8c3634757381cd6d8b2004ee037` (block 29565150) |
+| Deployer / admin | `0x793Af076d6Fe0A94Fb9436242dC6854Ef212B1F0` |
+| Roles | DEFAULT_ADMIN, LAB_ADMIN, INSTRUMENT_OWNER → deployer EOA |
+| Explorer | <https://scan.bohr.life/address/0x28d1f6e4093769446382ca5d76c121cedb105c0a> |
+
+Full record in `contracts/deployments/testnet-968.json` (no private keys tracked in git).
+
 #### Testnet deployment runbook (preparation-complete)
 
 The deploy script (`contracts/script/Deploy.s.sol`) compiles and is covered by the
